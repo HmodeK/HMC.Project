@@ -1,0 +1,26 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "https://demo.hmchealth.co.il",
+      "localStorage": [
+        {
+          "name": "iconify-count",
+          "value": "0"
+        },
+        {
+          "name": "i18nextLng",
+          "value": "he"
+        },
+        {
+          "name": "iconify-version",
+          "value": "iconify2"
+        },
+        {
+          "name": "authToken",
+          "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYyNWFiMDg2YjY2ZjA5Nzk3MGJmMmJmMCIsImVtYWlsIjoiYWRtaW5AZmFrZUVtYWlsLmlvIiwiaWROdW1iZXIiOiIzMzk2NzM1NDMiLCJ2aXNpdFJhdGUiOjIwLCJyb2xlIjoiQURNSU4iLCJwZXJzb25hbERldGFpbHMiOnsiZmlyc3ROYW1lIjoi16LXldeR15MiLCJsYXN0TmFtZSI6ImFkbWluICIsImJpcnRoRGF0ZSI6IjE5NzktMTItMjZUMTM6NDk6MzguMDAwWiIsInByaW1hcnlQaG9uZSI6IjY1NjAyMTczMDQiLCJtYXJ0aWFsU3RhdHVzIjoi16DXqdeV15kgIiwiYWRkcmVzcyI6InRlc3QgYWRkcmVzcyIsImdlbmRlciI6Ik1BTEUifSwiaXNOZXdVc2VyIjpmYWxzZSwiYWN0aXZlIjp0cnVlLCJjcmVhdGVkQXQiOiIyMDIyLTA0LTE2VDEyOjAzOjE4LjgzMVoiLCJ1cGRhdGVkQXQiOiIyMDI0LTAyLTE3VDE1OjA3OjMzLjE4MFoiLCJfX3YiOjAsInNob3VsZFNraXBQYXNzd29yZFZhbGlkYXRpb24iOmZhbHNlLCJlbXBsb3llZU51bWJlciI6IjEwMDAiLCJzdGFydERhdGUiOiIyMDE5LTA2LTAxVDEyOjA5OjU1LjAwMFoifSwiaWF0IjoxNzA5OTI3ODc0LCJleHAiOjE3MTI1MTk4NzR9.vkk14VnB3V0ZmZE7BtnuOJ2i95fq6Gh6NGmOCqkJusI"
+        }
+      ]
+    }
+  ]
+}

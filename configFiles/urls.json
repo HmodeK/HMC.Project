@@ -1,0 +1,6 @@
+{
+    "uiUrl": {
+        "websiteUrl": "https://demo.hmchealth.co.il/login",
+        "websiteUrlAfterLogin": "https://demo.hmchealth.co.il/app/dashboard"
+    }
+}

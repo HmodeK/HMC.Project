@@ -1,0 +1,22 @@
+{
+  "name": "hmc.project",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000H\u0000M\u0000C\u0000.\u0000P\u0000r\u0000o\u0000j\u0000e\u0000c\u0000t\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test --reporter=allure-playwright",
+    "generate": "npx allure generate ./allure-results --clean",
+    "open": "npx allure open ./allure-report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "playwright": "^1.42.1",
+    "typescript": "^5.4.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.25"
+  }
+}
