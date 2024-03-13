@@ -15,9 +15,10 @@ export class BrowserWrapper {
     }
 
     maximizeWindow = async () => {
-        if (this.page) {
-            await this.page.setViewportSize({ width: 1920, height: 1080 })
+        if (!this.page) {
+            throw new Error('Browser is not launched yet !!')
         }
+        await this.page.setViewportSize({ width: 1920, height: 1080 })
     }
 
     closeBrowser = async () => {
