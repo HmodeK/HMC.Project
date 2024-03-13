@@ -1,3 +1,10 @@
 {
-    "authFile": "playwright/.auth/user.json"
+    "authFile": "playwright/.auth/user.json",
+    "visitsStatus": {
+        "notPerformed": "לא בוצע",
+        "cancelled": "בוטל",
+        "done": "בוצע",
+        "sentToTheCheckout": "נשלח לקופה",
+        "notYetPerformed": "טרם בוצעו"
+    }
 }
