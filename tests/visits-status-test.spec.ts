@@ -16,17 +16,16 @@ test.describe('visits status test', () => {
         // await browser.maximizeWindow()
         const clickOnVistsCancelled = new DashboardPage(page)
         await clickOnVistsCancelled.clickOnVisitsCancelledIcon()
-        await page.waitForTimeout(1000)
+        await page.waitForTimeout(2000)
     });
 
     test.afterEach(async () => {
         await browser.closeBrowser()
     });
 
-    test('check if all queues are cancelled', async () => {
+    test('check if all visits are cancelled', async () => {
         const checkVisitsStatus = new allVisitsPage(page)
         expect(await checkVisitsStatus.checkIfVisitsCancelledExist(config.visitsStatus.cancelled)).toBeTruthy()
-        await page.waitForTimeout(1000)
     })
 
     test('navigate to the correct page we are looking for', async () => {
@@ -39,7 +38,16 @@ test.describe('visits status test', () => {
         expect(await getTitle2.getTheSelectedSidebarTitle()).toContain('כל הביקורים')
     })
 
+    test('check  if the employee is filterd', async () => {
+        const filterAboutEmployee = new allVisitsPage(page)
+        await filterAboutEmployee.makeFilterAboutEmployees(config.employees.employee7)
+        expect(await filterAboutEmployee.checkIfEmployeeIsFilteredExist(config.employees.employee7)).toBeTruthy()
+    })
 
-
+    test('check  if the status is changing at all the list we are looking for', async () => {
+        const checkAboutStatusOfVisits = new allVisitsPage(page)
+        await checkAboutStatusOfVisits.clickToChangeStatusOfVisits(config.visitsStatus.notPerformed)
+        expect(await checkAboutStatusOfVisits.checkStatus(config.visitsStatus.notPerformed)).toBeTruthy()
+    })
 
 })

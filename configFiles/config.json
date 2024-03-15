@@ -6,5 +6,9 @@
         "done": "בוצע",
         "sentToTheCheckout": "נשלח לקופה",
         "notYetPerformed": "טרם בוצעו"
+    },
+
+    "employees" : {
+        "employee7" : "עובד employee 7"
     }
 }
