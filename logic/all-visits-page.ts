@@ -1,7 +1,6 @@
 import { BasePage } from "../infra/browser/base-page";
 import { Locator, Page } from "playwright";
-import { waitForElementToBeVisible, waitForTimeOut } from "../infra/utils/wait-for-elements";
-import { count } from "console";
+
 
 export class allVisitsPage extends BasePage {
 
@@ -13,6 +12,8 @@ export class allVisitsPage extends BasePage {
     private submit: Locator
     private searchResult: Locator
     private StatusButton: Locator
+    private periodSelectButton: Locator
+    private previousMonth: Locator
 
 
     constructor(page: Page) {
@@ -25,6 +26,8 @@ export class allVisitsPage extends BasePage {
         this.submit = page.locator('//button[@type="submit"]')
         this.searchResult = page.locator('//span[@class="MuiChip-label MuiChip-labelMedium rtl-9iedg7"]')
         this.StatusButton = page.locator('//div[@aria-haspopup="listbox"]').nth(1)
+        this.periodSelectButton = page.locator('//div[@role="combobox"]').nth(0)
+        this.previousMonth = page.locator('//li[@data-value="PREVIOUS_MONTH"]')
         this.initPage()
     }
 
@@ -147,6 +150,20 @@ export class allVisitsPage extends BasePage {
             }
         }
         return false
+    }
+
+    clickOnPeriodSelectButton = async () => {
+        await this.periodSelectButton.click()
+    }
+    
+    clickOnPreviousMonth = async () => {
+        await this.previousMonth.click()
+    }
+
+    selectPreviousMonth =async () => {
+        await this.clickOnPeriodSelectButton()
+        await this.clickOnPreviousMonth()
+        await this.page.waitForTimeout(1000)
     }
 }
 
