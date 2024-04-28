@@ -25,6 +25,7 @@ test.describe('visits status test', () => {
 
     test('check if all visits are cancelled', async () => {
         const checkVisitsStatus = new allVisitsPage(page)
+        await checkVisitsStatus.selectPreviousMonth()
         expect(await checkVisitsStatus.checkIfVisitsCancelledExist(config.visitsStatus.cancelled)).toBeTruthy()
     })
 
@@ -40,6 +41,7 @@ test.describe('visits status test', () => {
 
     test('check  if the employee is filterd', async () => {
         const filterAboutEmployee = new allVisitsPage(page)
+        await filterAboutEmployee.selectPreviousMonth()
         await filterAboutEmployee.makeFilterAboutEmployees(config.employees.employee7)
         expect(await filterAboutEmployee.checkIfEmployeeIsFilteredExist(config.employees.employee7)).toBeTruthy()
     })
