@@ -12,6 +12,7 @@ export class DashboardPage extends BasePage {
     }
 
     clickOnVisitsCancelledIcon = async () => {
+        await this.page.waitForTimeout(1000)
         await this.visitsCancelled.click()
     }
 }

@@ -19,7 +19,7 @@ export class allVisitsPage extends BasePage {
     constructor(page: Page) {
         super(page)
         this.visitsList = page.locator('//td[@class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium rtl-8epd4k"]')
-        this.pageTitle = page.locator('//div[@class="MuiGrid-root rtl-rfnosa"]')
+        this.pageTitle = page.locator('//div[@class="MuiGrid-root rtl-rfnosa"]').nth(0)
         this.filterByEmployee = page.locator('[fill="currentColor"]').nth(1)
         this.listOfEmployeesToFilter = page.locator('//input[@id="Auto_Complete_Filter"]')
         this.listsOfEmployeesToSelect = page.locator('//ul[@id="Auto_Complete_Filter-listbox"]')
@@ -82,7 +82,7 @@ export class allVisitsPage extends BasePage {
             if (targetElement) {
                 await targetElement.click();
             } else {
-                throw new Error(`Item "${employeeNum}" not found in the list.`);
+                throw new Error(`Employee "${employeeNum}" not found in the list.`);
             }
         } else {
             throw new Error('UL element not found.');
@@ -155,12 +155,12 @@ export class allVisitsPage extends BasePage {
     clickOnPeriodSelectButton = async () => {
         await this.periodSelectButton.click()
     }
-    
+
     clickOnPreviousMonth = async () => {
         await this.previousMonth.click()
     }
 
-    selectPreviousMonth =async () => {
+    selectPreviousMonth = async () => {
         await this.clickOnPeriodSelectButton()
         await this.clickOnPreviousMonth()
         await this.page.waitForTimeout(1000)
