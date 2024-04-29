@@ -9,8 +9,8 @@
 
 <!-- Project Description Container -->
 <div class="container">
-    <h1>Final Project: H.M.C Automated Testing</h1>
-    <p>This project focuses on automated testing for the H.M.C website using Playwright.</p>
+    <h1>Project: H.M.C Health Automated Testing</h1>
+    <p>This project focuses on automated testing for the H.M.C Health website using Playwright.</p>
 </div>
 
 <!-- Installation Section -->
