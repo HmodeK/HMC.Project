@@ -1,14 +1,71 @@
 {
-    "authFile": "playwright/.auth/user.json",
-    "visitsStatus": {
-        "notPerformed": "לא בוצע",
-        "cancelled": "בוטל",
-        "done": "בוצע",
-        "sentToTheCheckout": "נשלח לקופה",
-        "notYetPerformed": "טרם בוצעו"
-    },
+  "authFile": "playwright/.auth/user.json",
+  "visitsStatus": {
+    "notPerformed": "לא בוצע",
+    "cancelled": "בוטל",
+    "done": "בוצע",
+    "sentToTheCheckout": "נשלח לקופה",
+    "notYetPerformed": "טרם בוצעו"
+  },
+  "employees": {
+    "employee7": "עובד employee 7",
+    "employee36": "עובד employee 36"
+  },
+  "addNewEmployee": {
+    "firstName": "מוחמד",
+    "lastName": "כנעאן",
+    "email": "hmodekanaan5653@gmail.com",
+    "password": "2_Do_not_give_it",
+    "PasswordVerification": "2_Do_not_give_it",
+    "id": "205722176",
+    "visitRate": "500",
+    "professionalLicenseNumber": "123456789",
+    "roleDescription": "רופא כללי",
+    "employeeNumber": "77777",
+    "startDate": "01/01/2024",
+    "completionDate": "31/12/2024",
+    "birthday": "11/10/1994",
+    "phoneNumber": "0523725653",
+    "anotherPhone": "0000000000",
+    "address": "מג'ד אל כרום"
+  },
+  "authorizationType": {
+    "systemManager": "מנהל מערכת",
+    "adman": "אדמן",
+    "employee": "עובד"
+  },
 
-    "employees" : {
-        "employee7" : "עובד employee 7"
-    }
+  "role": {
+    "nurse": "אח ",
+    "doctor": "רופא",
+    "dietician": "דיאטנית",
+    "speechTherapist.": "קלינאי תקשורת",
+    "occupationalTherapy.": "ריפוי בעיסוק",
+    "physiotherapy": "פיזיותרפיה",
+    "socialEmployee.": "עובד סוציאלי",
+    "Other.": "אחר"
+  },
+
+  "maritalStatus": {
+    "Married": "נשוי",
+    "widower": "אלמן",
+    "separated": "פרוד",
+    "divorcee": "גרוש",
+    "single": "רווק"
+  },
+
+  "gender": {
+    "male": "זכר",
+    "female": "נקבה"
+  },
+
+  "employeeWeAreLookingFor": {
+    "fullName": "מוחמד כנעאן"
+  },
+
+  "Operations": {
+    "update": "עדכן",
+    "passwordReset": "איפוס סיסמה",
+    "employeeBlocking": "חסימת עובד"
+  }
 }

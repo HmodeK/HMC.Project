@@ -3,7 +3,7 @@ import { Locator, Page } from "playwright";
 
 export class SidebarPage extends BasePage {
     private dashboardIcon: Locator
-    private workersIcon: Locator
+    private employeesIcon: Locator
     private patientsIcon: Locator
     private healthFundsIcon: Locator
     private allVisitsIcon: Locator
@@ -18,7 +18,7 @@ export class SidebarPage extends BasePage {
     constructor(page: Page) {
         super(page)
         this.dashboardIcon = page.locator('//div[@class="MuiListItemText-root rtl-xdiy5h"]').first()
-        this.workersIcon = page.locator('//div[@class="MuiListItemText-root rtl-xdiy5h"]').nth(1)
+        this.employeesIcon = page.locator('//div[@class="MuiListItemText-root rtl-xdiy5h"]').nth(1)
         this.patientsIcon = page.locator('//div[@class="MuiListItemText-root rtl-xdiy5h"]').nth(2)
         this.healthFundsIcon = page.locator('//div[@class="MuiListItemText-root rtl-xdiy5h"]').nth(3)
         this.allVisitsIcon = page.locator('//div[@class="MuiListItemText-root rtl-xdiy5h"]').nth(4)
@@ -33,6 +33,10 @@ export class SidebarPage extends BasePage {
 
     getTheSelectedSidebarTitle = async (): Promise<string> => {
         return await this.allVisitsIcon.innerText()
+    }
+
+    clickOnEmployeesIcon = async () => {
+        await this.employeesIcon.click()
     }
 
 }

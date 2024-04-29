@@ -16,30 +16,30 @@ test.describe('visits status test', () => {
         // await browser.maximizeWindow()
         const clickOnVistsCancelled = new DashboardPage(page)
         await clickOnVistsCancelled.clickOnVisitsCancelledIcon()
-        await page.waitForTimeout(2000)
+        await page.waitForTimeout(3000)
     });
 
     test.afterEach(async () => {
         await browser.closeBrowser()
     });
 
-    test('check if all visits are cancelled', async () => {
+    test('Go to canceled visits and select a month back and check if all visits is cancelled', async () => {
         const checkVisitsStatus = new allVisitsPage(page)
         await checkVisitsStatus.selectPreviousMonth()
         expect(await checkVisitsStatus.checkIfVisitsCancelledExist(config.visitsStatus.cancelled)).toBeTruthy()
     })
 
-    test('navigate to the correct page we are looking for', async () => {
+    test('navigate to the correct page[all visits] we are looking for & check if it navigates to the right page', async () => {
         const getTitle = new allVisitsPage(page)
         expect(await getTitle.getPageTitle()).toContain('כל הביקורים')
     })
 
-    test('navigate to the correct sidebar we are looking for', async () => {
+    test('navigate to the correct sidebar we are looking for & check if it navigates to the right page', async () => {
         const getTitle2 = new SidebarPage(page)
         expect(await getTitle2.getTheSelectedSidebarTitle()).toContain('כל הביקורים')
     })
 
-    test('check  if the employee is filterd', async () => {
+    test('Filter an employee from the list and check if filtered or not ', async () => {
         const filterAboutEmployee = new allVisitsPage(page)
         await filterAboutEmployee.selectPreviousMonth()
         await filterAboutEmployee.makeFilterAboutEmployees(config.employees.employee7)
