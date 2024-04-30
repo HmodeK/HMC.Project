@@ -1,5 +1,5 @@
 import { BasePage } from "../infra/browser/base-page";
-import { Locator, Page } from "playwright";
+import { Dialog, ElementHandle, Locator, Page } from "playwright";
 
 export class EmployeeList extends BasePage {
     private searchBar: Locator;
@@ -9,6 +9,11 @@ export class EmployeeList extends BasePage {
     private newUserLink: Locator;
     private yesButtonPopup: Locator;
     private noButtonPopup: Locator;
+    private alertPopup: Locator;
+    private newPasswordReset: Locator;
+    private passwordVerificationToReset: Locator;
+    private passwordResetButton: Locator;
+    private cancelation: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -19,6 +24,11 @@ export class EmployeeList extends BasePage {
         this.newUserLink = this.linkByHref('/app/user/new');
         this.yesButtonPopup = page.locator('//button[@type="button"]').nth(25)
         this.noButtonPopup = page.locator('//button[@type="button"]').nth(26)
+        this.alertPopup = page.locator('//div[@role="alert"]')
+        this.newPasswordReset = page.locator('//input[@name="newPassword"]')
+        this.passwordVerificationToReset = page.locator('//input[@name="confirmNewPassword"]')
+        this.passwordResetButton = page.locator('//button[@type="submit"]')
+        this.cancelation = page.locator(`//*[contains(text(), 'ביטול')]`);
         this.initPage();
     }
 
@@ -57,7 +67,6 @@ export class EmployeeList extends BasePage {
 
     deleteTheEmployeeWeAreAdding = async (oper: string) => {
         await this.employeesList.nth(6).click()
-        // await this.page.waitForTimeout(3000)
         await this.selectOperations(oper)
         await this.page.waitForTimeout(1000)
         await this.selectYesButtonPopup()
@@ -94,5 +103,56 @@ export class EmployeeList extends BasePage {
 
     selectNoButtonPopup = async () => {
         await this.noButtonPopup.click()
+    }
+
+    validateMinimumLength = async (input: string, minLength: number): Promise<boolean> => {
+        return input.length >= minLength;
+    }
+
+    fillNewPasswordToReset = async (newPasswordToReset: string) => {
+        const isValid = await this.validateMinimumLength(newPasswordToReset, 6); // Validate input length
+        if (!isValid) {
+            console.error(`Input must be at least 6 characters long.`);
+            return;
+        }
+        await this.newPasswordReset.fill(newPasswordToReset);
+    }
+
+    fillPasswordVerificationToReset = async (passVerification: string) => {
+        const isValid = await this.validateMinimumLength(passVerification, 6); // Validate input length
+        if (!isValid) {
+            console.error(`Input must be at least 6 characters long.`);
+            return;
+        }
+        await this.passwordVerificationToReset.fill(passVerification);
+    }
+
+    selectEmployeeAndResetPassword = async (empName: string, oper: string, newPass: string, passVerif: string) => {
+        await this.checkIfEmployeeNameIsExist(empName);
+        await this.page.waitForTimeout(1000)
+        await this.employeesList.nth(6).click()
+        await this.page.waitForTimeout(1000)
+        await this.selectOperations(oper);
+        await this.fillNewPasswordToReset(newPass);
+        await this.fillPasswordVerificationToReset(passVerif);
+        await this.passwordResetButton.click();
+        // await this.cancelation.click();
+        await this.page.waitForTimeout(4000)
+
+    }
+
+    checkIfAlertContainsText = async (expectedText: string): Promise<boolean> => {
+        try {
+            await this.page.waitForSelector('//div[@role="alert"]', { state: 'visible', timeout: 10000 });
+
+            // Get the text content of the alert popup
+            const alertText: string | null = await this.alertPopup.innerText();
+
+            // Check if the alert popup text contains the expected text
+            return alertText !== null && alertText.includes(expectedText);
+        } catch (error) {
+            console.error('Error while checking alert message visibility:', error);
+            return false; 
+        }
     }
 }

@@ -9,14 +9,15 @@
   },
   "employees": {
     "employee7": "עובד employee 7",
-    "employee36": "עובד employee 36"
+    "employee36": "עובד employee 36",
+    "hmodekanaan": "mohamed kanaan"
   },
   "addNewEmployee": {
     "firstName": "מוחמד",
     "lastName": "כנעאן",
     "email": "hmodekanaan5653@gmail.com",
     "password": "2_Do_not_give_it",
-    "PasswordVerification": "2_Do_not_give_it",
+    "passwordVerification": "2_Do_not_give_it",
     "id": "205722176",
     "visitRate": "500",
     "professionalLicenseNumber": "123456789",
@@ -67,5 +68,10 @@
     "update": "עדכן",
     "passwordReset": "איפוס סיסמה",
     "employeeBlocking": "חסימת עובד"
+  },
+
+  "passwordReset": {
+    "newPassword": "123456m",
+    "verifPassword": "123456m"
   }
 }
