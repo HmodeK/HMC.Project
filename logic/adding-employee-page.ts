@@ -1,5 +1,7 @@
 import { BasePage } from "../infra/browser/base-page";
 import { Locator, Page } from "playwright";
+import { employeeProfilePage } from "./employee-profile-page";
+import { EmployeeList } from "./employee-list-page";
 
 export class AddingEmployeePage extends BasePage {
     private firstName: Locator;
@@ -288,5 +290,28 @@ export class AddingEmployeePage extends BasePage {
             }
         }
         return false
+    }
+
+    clearTheField = async () => {
+        await this.phoneNumber.fill('');
+        await this.email.fill('');
+    }
+    //// Create an new instance of {employee-profile-page}
+    makeClearAllInTheField = async () => {
+        const employeeNewInstance = new employeeProfilePage(this.page);
+        await employeeNewInstance.selectEditingDetails();
+        await this.clearTheField();
+        // await this.page.waitForTimeout(4000);
+    }
+
+    makeTheNewUpdateForTheEmployeeDetails = async (newEmail: string, newPhoneNum: string, newGender: string, empName: string, employeName: string) => {
+        await this.email.fill(newEmail);
+        await this.phoneNumber.fill(newPhoneNum);
+        await this.clickOnGenderField();
+        await this.selectGender(newGender);
+        await this.clickOnSubmitButton();
+        await this.page.waitForTimeout(2000);
+        const selectEmployeeAgainToReturnInTheEmployeeProfile = new EmployeeList(this.page);
+        await selectEmployeeAgainToReturnInTheEmployeeProfile.selectingEmployeeToEnterTheirProfile(empName, employeName)
     }
 }

@@ -5,6 +5,7 @@ import config from "../configFiles/config.json"
 import { SidebarPage } from "../logic/sidebar-page";
 import { EmployeeList } from "../logic/employee-list-page";
 import { AddingEmployeePage } from "../logic/adding-employee-page";
+import { employeeProfilePage } from "../logic/employee-profile-page";
 
 test.describe('Searching about employee', () => {
     let browser: BrowserWrapper;
@@ -28,6 +29,7 @@ test.describe('Searching about employee', () => {
     test('Search for a specific employee and verify whether he is found or not', async () => {
         const searchFromEmployeeList = new EmployeeList(page);
         await searchFromEmployeeList.fillEmployeeName(config.employees.employee36);
+        await page.waitForTimeout(2000)
         expect(await searchFromEmployeeList.checkIfEmployeeNameIsExist(config.employees.employee36)).toBeTruthy();
     });
 
@@ -64,4 +66,27 @@ test.describe('Searching about employee', () => {
         expect(isAlertSuccessful).toBe(true);
     });
 
+
+    test('Selecting an employee and entering in his profile to update the details & verify whether an update has been made in employee details container', async () => {
+        const newTest = new EmployeeList(page);
+        await newTest.selectingEmployeeToEnterTheirProfile("mohamed absr", "mohamed absr");
+        const newUpdate = new AddingEmployeePage(page)
+        await newUpdate.makeClearAllInTheField()
+        await newUpdate.makeTheNewUpdateForTheEmployeeDetails(config.employeeProfileToUpdate.emailForChange,
+            config.employeeProfileToUpdate.phoneNumberForChange, config.gender.female, "mohamed absr", "mohamed absr")
+        const updateDetails = new employeeProfilePage(page)
+        await page.waitForTimeout(1000)
+        expect(await updateDetails.compareNameInPTag("נקבה")).toBeTruthy();
+    });
+
+    test('Selecting an employee and entering in his profile to update the details & Verify if alert contains the word "Report updated successfully"', async () => {
+        const newTest = new EmployeeList(page);
+        await newTest.selectingEmployeeToEnterTheirProfile("mohamed absr", "mohamed absr");
+        const newUpdate = new AddingEmployeePage(page)
+        await newUpdate.makeClearAllInTheField()
+        await newUpdate.makeTheNewUpdateForTheEmployeeDetails(config.employeeProfileToUpdate.emailForChange,
+            config.employeeProfileToUpdate.phoneNumberForChange, config.gender.male, "", "")
+        const isAlertSuccessful2 = await newTest.checkIfAlertContainsText('דוח עודכן בהצלחה');
+        expect(isAlertSuccessful2).toBe(true);
+    });
 })

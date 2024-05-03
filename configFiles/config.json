@@ -73,5 +73,10 @@
   "passwordReset": {
     "newPassword": "123456m",
     "verifPassword": "123456m"
+  },
+  
+  "employeeProfileToUpdate": {
+    "phoneNumberForChange": "0587799885",
+    "emailForChange": "h789456123@hotmail.com"
   }
 }

@@ -1,5 +1,5 @@
 import { BasePage } from "../infra/browser/base-page";
-import { Dialog, ElementHandle, Locator, Page } from "playwright";
+import { Locator, Page } from "playwright";
 
 export class EmployeeList extends BasePage {
     private searchBar: Locator;
@@ -14,11 +14,15 @@ export class EmployeeList extends BasePage {
     private passwordVerificationToReset: Locator;
     private passwordResetButton: Locator;
     private cancelation: Locator;
+    private employe: Locator;//////////////
+    private employeeSearchResult: Locator;
+
 
     constructor(page: Page) {
         super(page);
         this.searchBar = page.locator('//input[@type="search"]');
         this.employeesList = page.locator('//td[@class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium rtl-8epd4k"]');
+        this.employe = page.locator('//td[@class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium rtl-8epd4k"]').nth(0);
         this.employeeStatusButton = page.locator('//div[@aria-haspopup="listbox"]').first();
         this.linkByHref = (hrefValue) => this.page.locator(`a[href="${hrefValue}"]`);
         this.newUserLink = this.linkByHref('/app/user/new');
@@ -29,6 +33,7 @@ export class EmployeeList extends BasePage {
         this.passwordVerificationToReset = page.locator('//input[@name="confirmNewPassword"]')
         this.passwordResetButton = page.locator('//button[@type="submit"]')
         this.cancelation = page.locator(`//*[contains(text(), 'ביטול')]`);
+        this.employeeSearchResult = page.locator('//tbody[@class="MuiTableBody-root rtl-yvb2m1"]');
         this.initPage();
     }
 
@@ -152,7 +157,29 @@ export class EmployeeList extends BasePage {
             return alertText !== null && alertText.includes(expectedText);
         } catch (error) {
             console.error('Error while checking alert message visibility:', error);
-            return false; 
+            return false;
         }
+    }
+
+    selectEmployee = async () => {
+        await this.employe.click()
+    }
+
+    selectingEmployeeToEnterTheirProfile = async (empName: string, employDetail: string) => {
+        await this.fillEmployeeName(empName)
+        await this.page.waitForTimeout(1000)
+        await this.checkIfEmployeeDetailsIsExist(employDetail)
+        await this.selectEmployee()
+    }
+
+    checkIfEmployeeDetailsIsExist = async (employeeDetail1: string): Promise<boolean> => {
+        const count = await this.employeeSearchResult.count()
+        for (let i = 0; i < count; i++) {
+            if (await this.employeeSearchResult.nth(i).innerText() === employeeDetail1) {
+                await this.page.waitForTimeout(2000)
+                return true;
+            }
+        }
+        return false;
     }
 }
