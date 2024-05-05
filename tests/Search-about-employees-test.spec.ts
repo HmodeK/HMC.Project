@@ -51,7 +51,7 @@ test.describe('Searching about employee & adding new employee', () => {
     test('Verify if the new employee we added has been deleted', async () => {
         const makeSureItIsDeleted = new EmployeeList(page);
         await page.waitForTimeout(1000);
-        await makeSureItIsDeleted.checkIfEmployeeNameExistAndDeleteIt(config.employeeWeAreLookingFor.fullName, config.Operations.employeeBlocking)
+        await makeSureItIsDeleted.checkIfEmployeeNameExistAndDeleteIt(config.employeeWeAreLookingFor.fullName, config.OperationsInEmployeesPage.employeeBlocking)
         const employeeExists = await makeSureItIsDeleted.checkIfEmployeeNameIsExist(config.employeeWeAreLookingFor.fullName);
         expect(employeeExists).toBe(false);
     });

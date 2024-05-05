@@ -38,5 +38,9 @@ export class SidebarPage extends BasePage {
     clickOnEmployeesIcon = async () => {
         await this.employeesIcon.click()
     }
+    
+    clickOnPatiensIcon = async () => {
+        await this.patientsIcon.click()
+    }
 
 }

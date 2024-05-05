@@ -70,7 +70,7 @@
     "fullName": "מוחמד כנעאן"
   },
 
-  "Operations": {
+  "OperationsInEmployeesPage": {
     "update": "עדכן",
     "passwordReset": "איפוס סיסמה",
     "employeeBlocking": "חסימת עובד"
@@ -88,5 +88,16 @@
   "employeeProfileToUpdate": {
     "phoneNumberForChange": "0587799885",
     "emailForChange": "h789456123@hotmail.com"
+  },
+  
+
+  "healthFunds" : {
+    "meuhedet" : "מאוחדת",
+    "leumit" : "לאומית"
+  },
+
+  "OperationsInPatientPage": {
+    "update": "עדכן",
+    "remove": "מחיקה"
   }
 }

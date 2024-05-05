@@ -68,7 +68,7 @@ test.describe('Selecting an employee & updating it', () => {
 
     test('Selecting an employee & Verify if alert contains the word "password changed successfully"', async () => {
         const alert = new EmployeeList(page);
-        await alert.selectEmployeeAndResetPassword(config.employees.hmodekanaan, config.Operations.passwordReset,
+        await alert.selectEmployeeAndResetPassword(config.employees.hmodekanaan, config.OperationsInEmployeesPage.passwordReset,
             config.passwordReset.newPassword, config.passwordReset.verifPassword)
         const isAlertSuccessful = await alert.checkIfAlertContainsText('סיסמה שונתה בהצלחה');
         expect(isAlertSuccessful).toBe(true);
