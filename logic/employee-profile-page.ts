@@ -1,22 +1,27 @@
 import { BasePage } from "../infra/browser/base-page";
 import { Locator, Page } from "playwright";
+import { EmployeeList } from "./employee-list-page";
 
 export class employeeProfilePage extends BasePage {
 
-    private editingDetails: Locator
-    private passwordReset: Locator
-    private blockingEmployee: Locator
+    private editingDetailsButton: Locator
+    private passwordResetButton: Locator
+    private blockingEmployeeButton: Locator
+    private passResetButton: Locator
+    private yesButtonToBlock: Locator
 
     constructor(page: Page) {
         super(page);
-        this.editingDetails = page.locator(`//*[contains(text(), 'עריכת פרטים')]`);
-        this.passwordReset = page.locator('//button[@type="button"]').nth(2);
-        this.blockingEmployee = page.locator('//button[@type="button"]').nth(3);
+        this.editingDetailsButton = page.locator(`//*[contains(text(), 'עריכת פרטים')]`);
+        this.passwordResetButton = page.locator('//button[@type="button"]').nth(2);
+        this.blockingEmployeeButton = page.locator('//button[@type="button"]').nth(3);
+        this.passResetButton = page.locator('//button[@type="submit"]');
+        this.yesButtonToBlock = page.locator('//button[@type="button"]').nth(10);
         this.initPage();
     }
 
     selectEditingDetails = async () => {
-        await this.editingDetails.click();
+        await this.editingDetailsButton.click();
     }
 
     compareNameInPTag = async (expectedName: string) => {
@@ -35,5 +40,40 @@ export class employeeProfilePage extends BasePage {
         }
         console.log(` OoOoPs , the expected name "${expectedName}" was not found .`);
         return false;
+    }
+
+    selectOnPasswordReset = async () => {
+        await this.passwordResetButton.click();
+    }
+
+
+     generateRandomNumber=async() => {
+        const min = 100000000; 
+        const max = 999999999; 
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    performPasswordResetRandomNumbers = async () => {
+        await this.selectOnPasswordReset();
+        const newPas = new EmployeeList(this.page);
+        const randomPass = await this.generateRandomNumber();
+        await newPas.fillNewPasswordToReset(randomPass.toString()); // Convert the random number to string
+        await newPas.fillPasswordVerificationToReset(randomPass.toString());
+        await this.page.waitForTimeout(1000)
+        await this.passResetButton.click();
+    }
+
+    selectOnBlockingEmployee = async () => {
+        await this.blockingEmployeeButton.click();
+    }
+
+    selectOnYesButtonToBlock = async () => {
+        await this.yesButtonToBlock.click()
+    }
+
+    performBlockForAnEmployee = async () => {
+        await this.selectOnBlockingEmployee();
+        await this.selectOnYesButtonToBlock();
+        await this.page.waitForTimeout(3000)
     }
 }

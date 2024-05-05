@@ -12,6 +12,12 @@
     "employee36": "עובד employee 36",
     "hmodekanaan": "mohamed kanaan"
   },
+  "activityStatus" : {
+
+    "active":"פעיל",
+    "inactive":"לא פעיל"
+  },
+
   "addNewEmployee": {
     "firstName": "מוחמד",
     "lastName": "כנעאן",
@@ -68,6 +74,10 @@
     "update": "עדכן",
     "passwordReset": "איפוס סיסמה",
     "employeeBlocking": "חסימת עובד"
+  },
+
+  "OperationsWithInactiveStatus": {
+    "becomeActive": "הפוך לפעיל"    
   },
 
   "passwordReset": {
