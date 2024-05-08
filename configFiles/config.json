@@ -93,11 +93,38 @@
 
   "healthFunds" : {
     "meuhedet" : "מאוחדת",
-    "leumit" : "לאומית"
+    "leumit" : "לאומית",
+    "maccabi" : "מכבי",
+    "clalit" : "כללית"
   },
 
   "OperationsInPatientPage": {
     "update": "עדכן",
     "remove": "מחיקה"
+  },
+
+  "addingPatient" : {
+    "firstName" : "אחמד",
+    "lastName" : "פלאח",
+    "id" : "205722176",
+    "birthday" : "10/08/1999",
+    "phoneNumber" : "0547309845",
+    "anotherPhone" : "0524567895",
+    "address": "דיר אל אסד"
+  },
+
+  "contactDetails" : {
+    "firstName" : "חמודי",
+    "lastName" : "כנעאן",
+    "phoneNumber" : "0523725653"
+  },
+
+  "selectIdType" : {
+    "id":"ת.ז",
+    "passport":"דרכון"
+  },
+
+  "patientWeAreLookingFor": {
+    "fullName": "אחמד פלאח"
   }
 }

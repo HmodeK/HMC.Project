@@ -39,8 +39,8 @@ export class AddingEmployeePage extends BasePage {
         this.id = page.locator('//input[@name="idNumber"]');
         this.visitRate = page.locator('//input[@name="visitRate"]');
         this.professionalLicenseNumber = page.locator('//input[@name="licenseNumber"]');
-        this.AuthorizationTypeField = page.locator('//div[@id="mui-component-select-role"]');
-        this.roleField = page.locator('//div[@id="mui-component-select-position"]');
+        this.AuthorizationTypeField = page.locator('//div[@id="mui-component-select-role"]');//הרשאה
+        this.roleField = page.locator('//div[@id="mui-component-select-position"]');//תַפְקִיד
         this.roleDescription = page.locator('//input[@name="positionDescription"]');
         this.employeeNumber = page.locator('//input[@name="employeeNumber"]');
         this.startDate = page.locator('//input[@type="tel"]').first();
