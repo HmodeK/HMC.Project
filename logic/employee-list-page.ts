@@ -8,7 +8,7 @@ export class EmployeeList extends BasePage {
     linkByHref: (hrefValue: any) => Locator;
     private newUserLink: Locator;
     private yesButtonPopup: Locator;
-    private noButtonPopup: Locator;
+    // private noButtonPopup: Locator;
     private alertPopup: Locator;
     private newPasswordReset: Locator;
     private passwordVerificationToReset: Locator;
@@ -25,8 +25,8 @@ export class EmployeeList extends BasePage {
         this.employeeStatusButton = page.locator('//div[@aria-haspopup="listbox"]').first();
         this.linkByHref = (hrefValue) => this.page.locator(`a[href="${hrefValue}"]`);
         this.newUserLink = this.linkByHref('/app/user/new');
-        this.yesButtonPopup = page.locator('//button[@type="button"]')
-        this.noButtonPopup = page.locator('//button[@type="button"]').nth(26)
+        this.yesButtonPopup = page.locator("//button[contains(text(), 'כן')]").first();
+        // this.noButtonPopup = page.locator('//button[@type="button"]').nth(26)
         this.alertPopup = page.locator('//div[@role="alert"]')
         this.newPasswordReset = page.locator('//input[@name="newPassword"]')
         this.passwordVerificationToReset = page.locator('//input[@name="confirmNewPassword"]')
@@ -102,7 +102,7 @@ export class EmployeeList extends BasePage {
     }
 
     selectYesButtonPopup = async () => {
-        await this.yesButtonPopup.nth(25).click()
+        await this.yesButtonPopup.click()
     }
 
     selectNoButtonPopup = async () => {
@@ -182,7 +182,6 @@ export class EmployeeList extends BasePage {
         await this.selectEmployee()
     }
 
-
     selectEmployeeStatus = async (emloyeStatus: string) => {
         const element = await this.page.$('//ul[@class="MuiList-root MuiList-padding MuiMenu-list rtl-r8u8y9"]');
 
@@ -218,7 +217,6 @@ export class EmployeeList extends BasePage {
         }
         return false;
     }
-
 
     checkIfEmployeeIsExistToSearchAgainInAnotherActivityStatus = async (employeeDetail1: string, emStatus: string): Promise<boolean> => {
         const count = await this.employeeSearchResult.count();
@@ -258,6 +256,6 @@ export class EmployeeList extends BasePage {
         await this.page.waitForTimeout(1000)
         await this.selectOperations(operation);
         await this.page.waitForTimeout(1000)
-        await this.yesButtonPopup.nth(6).click()
+        await this.selectYesButtonPopup()
     }
 }

@@ -9,7 +9,7 @@ export class PatientsListPage extends BasePage {
     private healthFundsList: Locator
     linkByHref: (hrefValue: any) => Locator;
     private addNewPatientLink: Locator;
-    private operationsInPatientPage: Locator;
+    private yesButtonPopup: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -19,24 +19,13 @@ export class PatientsListPage extends BasePage {
         this.healthFundsList = page.locator('//ul[@class="MuiAutocomplete-listbox rtl-1ll4iij"]');
         this.linkByHref = (hrefValue) => this.page.locator(`a[href="${hrefValue}"]`);
         this.addNewPatientLink = this.linkByHref('/app/patient/new');
-        this.operationsInPatientPage = page.locator('//ul[@class="MuiList-root MuiList-padding MuiMenu-list rtl-r8u8y9"]')
+        this.yesButtonPopup = page.locator("//button[contains(text(), 'כן')]").first();
+
         this.initPage();
     }
 
-
     fillPatientNameInSearchField = async (patientName: string) => {
         await this.searchBar.fill(patientName)
-    }
-
-    checkIfPatientNameIsExist = async (patienName: string): Promise<boolean> => {
-        const count = await this.patiensList.count()
-        for (let i = 0; i < count; i++) {
-            if (await this.patiensList.nth(i).innerText() === patienName) {
-
-                return true;
-            }
-        }
-        return false;
     }
 
     clickOnHealthFunds = async () => {
@@ -105,7 +94,7 @@ export class PatientsListPage extends BasePage {
     }
 
     selectOperationsInPatientPage = async (operations: string) => {
-        const element = await this.page.$(this.operationsInPatientPage.toString());
+        const element = await this.page.$('//ul[@class="MuiList-root MuiList-padding MuiMenu-list rtl-r8u8y9"]');
 
         if (element) {
             const listOfOperations = await element.$$('li');
@@ -126,5 +115,42 @@ export class PatientsListPage extends BasePage {
         } else {
             throw new Error('UL element not found.');
         }
+    }
+
+    clickAndSelectFromOperationsIcon = async (opper: string) => {
+        await this.patiensList.nth(6).click();
+        await this.page.waitForTimeout(2000);
+        await this.selectOperationsInPatientPage(opper);
+    };
+
+    checkIfSpecificPatientIsExist = async (patientWeAreLookingFor: string): Promise<boolean> => {
+        await this.page.waitForTimeout(2000);
+        const count = await this.patiensList.count();
+        for (let i = 0; i < count; i++) {
+            if (await this.patiensList.nth(i).innerText() === patientWeAreLookingFor) {
+                console.log(`Patient "${patientWeAreLookingFor}" found.`);
+                return true;
+            }
+        }
+        console.log(`Patient "${patientWeAreLookingFor}" not found.`);
+        return false;
+    }
+
+    selectYesButtonPopup = async () => {
+
+        if (this.yesButtonPopup) {
+            await this.yesButtonPopup.click();
+        } else {
+            console.error('Button not found');
+        }
+
+
+    }
+
+    performPatientDelete = async (patientNam: string, operationFromPatientList: string) => {
+        await this.checkIfSpecificPatientIsExist(patientNam);
+        await this.clickAndSelectFromOperationsIcon(operationFromPatientList);
+        await this.page.waitForTimeout(2000);
+        await this.selectYesButtonPopup();
     }
 }

@@ -45,7 +45,6 @@ test.describe('Searching about employee & adding new employee', () => {
                 config.addNewEmployee.birthday, config.addNewEmployee.phoneNumber, config.addNewEmployee.anotherPhone,
                 config.maritalStatus.Married, config.addNewEmployee.address, config.gender.male)
         expect(await addNewEmployee.checkIfSpecificEmployeeIsExist(config.employeeWeAreLookingFor.fullName)).toBeTruthy();
-        // await page.waitForTimeout(5000)
     });
 
     test('Verify if the new employee we added has been deleted', async () => {
