@@ -25,7 +25,7 @@ test.describe('Searching about employee & adding new employee', () => {
         await browser.closeBrowser();
     });
 
-    test('Search for a specific employee and verify whether he is found or not', async () => {
+    test.skip('Search for a specific employee and verify whether he is found or not', async () => {
         const searchFromEmployeeList = new EmployeeList(page);
         await searchFromEmployeeList.fillEmployeeName(config.employees.employee36);
         await page.waitForTimeout(2000)

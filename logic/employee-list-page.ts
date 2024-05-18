@@ -16,6 +16,7 @@ export class EmployeeList extends BasePage {
     private cancelation: Locator;
     private employe: Locator;
     private employeeSearchResult: Locator;
+    private pageTitle: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -33,9 +34,13 @@ export class EmployeeList extends BasePage {
         this.passwordResetButton = page.locator('//button[@type="submit"]')
         this.cancelation = page.locator(`//*[contains(text(), 'ביטול')]`);
         this.employeeSearchResult = page.locator('//tbody[@class="MuiTableBody-root rtl-yvb2m1"]');
+        this.pageTitle = page.locator('//h3[@class="MuiTypography-root MuiTypography-h3 MuiTypography-gutterBottom rtl-1n929hu"]');
         this.initPage();
     }
 
+    getPageTitle = async (): Promise<string> => {
+        return await this.pageTitle.innerText()
+    }
 
     fillEmployeeName = async (employeeName: string) => {
         await this.searchBar.fill(employeeName)
@@ -45,7 +50,7 @@ export class EmployeeList extends BasePage {
         const count = await this.employeesList.count()
         for (let i = 0; i < count; i++) {
             if (await this.employeesList.nth(i).innerText() === employeeName) {
-
+                console.log(`Employee name "${employeeName}" exists in the list.`);;
                 return true;
             }
         }
@@ -53,7 +58,8 @@ export class EmployeeList extends BasePage {
     }
 
     clickOnAddingNewEmployeeButton = async () => {
-        await this.newUserLink.click()
+        await this.newUserLink.click();
+        await this.page.waitForTimeout(2000);
     }
 
     checkIfEmployeeNameExistAndDeleteIt = async (employeeName: string, oper: string) => {
@@ -68,6 +74,28 @@ export class EmployeeList extends BasePage {
         }
         return null; // Employee not found
     }
+
+    checkIfEmployeeNameExist = async (employeeName: string) => {
+        const count = await this.employeesList.count();
+        for (let i = 0; i < count; i++) {
+            if (await this.employeesList.nth(i).innerText() === employeeName) {
+
+                await this.page.waitForTimeout(1000)
+                console.log(`Employee ${employeeName} exists at index ${i}`);
+                return `Employee ${employeeName} exists at index ${i}`;
+
+            }
+        }
+        return null; // Employee not found
+    }
+
+
+
+
+
+
+
+    
 
     deleteTheEmployeeWeAreAdding = async (oper: string) => {
         await this.employeesList.nth(6).click()
@@ -105,9 +133,9 @@ export class EmployeeList extends BasePage {
         await this.yesButtonPopup.click()
     }
 
-    selectNoButtonPopup = async () => {
-        await this.noButtonPopup.click()
-    }
+    // selectNoButtonPopup = async () => {    // כרגע לא בשימוש
+    //     await this.noButtonPopup.click()
+    // }
 
     validateMinimumLength = async (input: string, minLength: number): Promise<boolean> => {
         return input.length >= minLength;
@@ -132,6 +160,7 @@ export class EmployeeList extends BasePage {
     }
 
     selectEmployeeAndResetPassword = async (empName: string, oper: string, newPass: string, passVerif: string) => {
+        await this.fillEmployeeName(empName)
         await this.checkIfEmployeeNameIsExist(empName);
         await this.page.waitForTimeout(1000)
         await this.employeesList.nth(6).click()
@@ -182,6 +211,15 @@ export class EmployeeList extends BasePage {
         await this.selectEmployee()
     }
 
+    SelectAnEmployeeAndUpdateTheirDetails = async (empName: string, employIsExist: string, oper: string) => {
+        await this.fillEmployeeName(empName)
+        await this.page.waitForTimeout(1000)
+        await this.checkIfEmployeeDetailsIsExist(employIsExist)
+        await this.employeesList.nth(6).click()
+        await this.page.waitForTimeout(1000)
+        await this.selectOperations(oper)
+    }
+
     selectEmployeeStatus = async (emloyeStatus: string) => {
         const element = await this.page.$('//ul[@class="MuiList-root MuiList-padding MuiMenu-list rtl-r8u8y9"]');
 
@@ -199,7 +237,7 @@ export class EmployeeList extends BasePage {
             if (targetElement) {
                 await targetElement.click();
             } else {
-                throw new Error(`This maritalStatus "${emloyeStatus}" is not found in the list.`);
+                throw new Error(`This status "${emloyeStatus}" is not found in the list.`);
             }
         } else {
             throw new Error('UL element not found.');

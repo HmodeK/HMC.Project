@@ -56,34 +56,34 @@ export class PatientsListPage extends BasePage {
         }
     }
 
-    performSelctingFromHealthFundList = async (operHealthFundToSelect: string) => {
+    performSelctingFromClinicList = async (operHealthFundToSelect: string) => {
         await this.clickOnHealthFunds();
         await this.page.waitForTimeout(1000);
         await this.selectHealthFunds(operHealthFundToSelect);
     }
 
-    checkIfHealthFundsNameIsExist = async (healthFunds: string): Promise<boolean> => {
+    checkIfClinicsNameIsExist = async (Clinic: string): Promise<boolean> => {
 
         await this.page.waitForTimeout(1000);
         const count = await this.patiensList.count();
-        let foundCount = 0; // Counter for found health fund names
-        let targetFound = false; // Flag to track if the target health fund name is found
+        let foundCount = 0; // Counter for found Clinic names
+        let targetFound = false; // Flag to track if the target Clinic name is found
 
         for (let i = 3; i < count; i += 7) {
             const fundName = await this.patiensList.nth(i).innerText();
-            if (fundName === healthFunds) {
+            if (fundName === Clinic) {
                 targetFound = true; // Set the flag to true if the target name is found
                 continue;
             }
-            console.log(`Found another health fund name: ${fundName}`); // Print the found name
+            console.log(`Found another Clinic name: ${fundName}`); // Print the found name
             foundCount++; // Increment the counter for other names
         }
 
-        console.log(`Total found another health fund names: ${foundCount}`); // Print the total count of other names
+        console.log(`Total found another Clinic names: ${foundCount}`); // Print the total count of other names
         if (targetFound) {
-            console.log(`The target health fund name "${healthFunds}" is found.`);
+            console.log(`The target Clinic name "${Clinic}" is found.`);
         } else {
-            console.log(`The target health fund name "${healthFunds}" is not found.`);
+            console.log(`The target Clinic name "${Clinic}" is not found.`);
         }
         return foundCount === 0 && targetFound; // Return true if only the target name is found, false otherwise
     }

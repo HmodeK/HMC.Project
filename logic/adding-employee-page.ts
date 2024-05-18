@@ -27,6 +27,7 @@ export class AddingEmployeePage extends BasePage {
     private submitButton: Locator;
     private backToPreviousPage: Locator;
     private employeesList: Locator;
+    private pageTitle: Locator;
 
 
     constructor(page: Page) {
@@ -54,7 +55,16 @@ export class AddingEmployeePage extends BasePage {
         this.submitButton = page.locator('//button[@type="submit"]');
         this.backToPreviousPage = page.locator('//button[@type="button"]').last();
         this.employeesList = page.locator('//td[@class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium rtl-8epd4k"]');
+        this.pageTitle = page.locator('//h3[@class="MuiTypography-root MuiTypography-h3 rtl-1gx20ur"]');
         this.initPage();
+    }
+
+
+
+    getPageTitle = async (): Promise<string> => {
+        const pageTitle = await this.pageTitle.innerText();
+        console.log('Page Title:', pageTitle);
+        return pageTitle;
     }
 
 
@@ -297,11 +307,15 @@ export class AddingEmployeePage extends BasePage {
         await this.email.fill('');
     }
     //// Create an new instance of {employee-profile-page}
-    makeClearAllInTheField = async () => {
+    makeClearAllInTheFieldAboutProfilePage = async () => {
         const employeeNewInstance = new employeeProfilePage(this.page);
         await employeeNewInstance.selectEditingDetails();
         await this.clearTheField();
         // await this.page.waitForTimeout(4000);
+    } 
+    
+    makeClearAllInTheFieldAboutListPage = async () => {
+        await this.clearTheField();
     }
 
     makeTheNewUpdateForTheEmployeeDetails = async (newEmail: string, newPhoneNum: string, newGender: string, empName: string, employeName: string) => {
@@ -309,6 +323,7 @@ export class AddingEmployeePage extends BasePage {
         await this.phoneNumber.fill(newPhoneNum);
         await this.clickOnGenderField();
         await this.selectGender(newGender);
+        await this.page.waitForTimeout(1000);
         await this.clickOnSubmitButton();
         await this.page.waitForTimeout(2000);
         const selectEmployeeAgainToReturnInTheEmployeeProfile = new EmployeeList(this.page);
