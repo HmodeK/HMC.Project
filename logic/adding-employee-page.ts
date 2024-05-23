@@ -2,6 +2,7 @@ import { BasePage } from "../infra/browser/base-page";
 import { Locator, Page } from "playwright";
 import { employeeProfilePage } from "./employee-profile-page";
 import { EmployeeList } from "./employee-list-page";
+import { SidebarPage } from "./sidebar-page";
 
 export class AddingEmployeePage extends BasePage {
     private firstName: Locator;
@@ -302,31 +303,50 @@ export class AddingEmployeePage extends BasePage {
         return false
     }
 
-    clearTheField = async () => {
-        await this.phoneNumber.fill('');
-        await this.email.fill('');
-    }
     //// Create an new instance of {employee-profile-page}
-    makeClearAllInTheFieldAboutProfilePage = async () => {
+    makeClearInTheEmailField = async () => {
         const employeeNewInstance = new employeeProfilePage(this.page);
         await employeeNewInstance.selectEditingDetails();
-        await this.clearTheField();
+        await this.email.fill('');
         // await this.page.waitForTimeout(4000);
-    } 
-    
-    makeClearAllInTheFieldAboutListPage = async () => {
-        await this.clearTheField();
     }
 
-    makeTheNewUpdateForTheEmployeeDetails = async (newEmail: string, newPhoneNum: string, newGender: string, empName: string, employeName: string) => {
-        await this.email.fill(newEmail);
-        await this.phoneNumber.fill(newPhoneNum);
+    implementTheNewUpdateAboutGender = async (newGender: string) => {
         await this.clickOnGenderField();
         await this.selectGender(newGender);
         await this.page.waitForTimeout(1000);
         await this.clickOnSubmitButton();
-        await this.page.waitForTimeout(2000);
-        const selectEmployeeAgainToReturnInTheEmployeeProfile = new EmployeeList(this.page);
-        await selectEmployeeAgainToReturnInTheEmployeeProfile.selectingEmployeeToEnterTheirProfile(empName, employeName)
+        await this.page.waitForTimeout(1000);
     }
+
+    performActionAfterTest = async (areTheDetailsUpdated: boolean, isTheEmployeeAdded: boolean, employeeName: string, employeeNameOneMore: string,
+        operation: string, gender: string, fullName: string, employeeBlocking: string, employeeList: EmployeeList, addingEmployeePage: AddingEmployeePage) => {
+        switch (true) {
+            case areTheDetailsUpdated:
+                // ביצוע פעולות ניקוי ספציפיות עבור הבדיקה האחרונה
+                const sidebarPage = new SidebarPage(this.page)
+                await sidebarPage.clickOnEmployeesIcon();
+                await employeeList.SelectAnEmployeeAndUpdateTheirDetails(employeeName, employeeNameOneMore, operation);
+                await addingEmployeePage.implementTheNewUpdateAboutGender(gender);
+                break;
+
+            case isTheEmployeeAdded:
+                await employeeList.checkIfEmployeeNameExistAndDeleteIt(fullName, employeeBlocking);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 }

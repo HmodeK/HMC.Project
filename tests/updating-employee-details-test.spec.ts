@@ -15,7 +15,7 @@ test.describe('Selecting an employee & updating it', () => {
 
     test.beforeEach(async () => {
         browser = new BrowserWrapper;
-        page = await browser.getPage(urls.uiUrl.websiteUrl);
+        page = await browser.getPage(urls.employeesPage);
         // await browser.maximizeWindow();
         const employeesPage = new SidebarPage(page);
         await employeesPage.clickOnEmployeesIcon();
@@ -33,25 +33,22 @@ test.describe('Selecting an employee & updating it', () => {
         await browser.closeBrowser();
     });
 
-    test('Selecting an employee and entering in his profile to update the details & verify whether an update has been made in employee details container', async () => {
+    test('Select an employee, update their profile details, and verify the gender update in the details container', async () => {
         const newTest = new EmployeeList(page);
-        await newTest.selectingEmployeeToEnterTheirProfile("mohamed absr", "mohamed absr");
+        await newTest.selectingEmployeeToEnterTheirProfile(config.employees.employee36,config.employees.employee36);
         const newUpdate = new AddingEmployeePage(page)
-        await newUpdate.makeClearAllInTheFieldAboutProfilePage()
-        await newUpdate.makeTheNewUpdateForTheEmployeeDetails(config.employeeProfileToUpdate.emailForChange,
-            config.employeeProfileToUpdate.phoneNumberForChange, config.gender.female, "mohamed absr", "mohamed absr")
+        await newUpdate.implementTheNewUpdateAboutGender(config.gender.female)
         const updateDetails = new employeeProfilePage(page)
         await page.waitForTimeout(1000)
         expect(await updateDetails.compareNameInPTag("נקבה")).toBeTruthy();
     });
 
-    test.skip('Selecting an employee and entering in his profile to update the details & Verify if alert contains the word "Report updated successfully"', async () => {
+    test.skip('Select an employee, update their profile details, and verify the "email" update in the details container & Verify if alert contains the word "Report updated successfully"', async () => {
         const newTest = new EmployeeList(page);
-        await newTest.selectingEmployeeToEnterTheirProfile("mohamed absr", "mohamed absr");
+        await newTest.selectingEmployeeToEnterTheirProfile(config.employees.employee36,config.employees.employee36);
         const newUpdate = new AddingEmployeePage(page)
-        await newUpdate.makeClearAllInTheFieldAboutProfilePage()
-        await newUpdate.makeTheNewUpdateForTheEmployeeDetails(config.employeeProfileToUpdate.emailForChange,
-            config.employeeProfileToUpdate.phoneNumberForChange, config.gender.male, "", "")
+        await newUpdate.makeClearInTheEmailField()
+        await newUpdate.implementTheNewUpdateAboutGender(config.employeeProfileToUpdate.emailForChange)
         const isAlertSuccessful2 = await newTest.checkIfAlertContainsText('דוח עודכן בהצלחה');
         expect(isAlertSuccessful2).toBe(true);
         //****/    \****\\   
@@ -64,7 +61,7 @@ test.describe('Selecting an employee & updating it', () => {
 
     test('Selecting an employee and perform a password reset on the employees personal page & Verify if alert contains the word "Password changed successfully"', async () => {
         const newTest = new EmployeeList(page);
-        await newTest.selectingEmployeeToEnterTheirProfile("mohamed absr", "mohamed absr");
+        await newTest.selectingEmployeeToEnterTheirProfile(config.employees.employee36,config.employees.employee36);
         const passReset = new employeeProfilePage(page)
         await passReset.performPasswordResetRandomNumbers();
         const alerIstSuccessfully = await newTest.checkIfAlertContainsText('סיסמה שונתה בהצלחה');

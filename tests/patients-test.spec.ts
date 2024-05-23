@@ -13,7 +13,7 @@ test.describe('Searching about employee & adding new employee', () => {
 
     test.beforeEach(async () => {
         browser = new BrowserWrapper;
-        page = await browser.getPage(urls.uiUrl.websiteUrl);
+        page = await browser.getPage(urls.patientsPage);
         // await browser.maximizeWindow();
         const entryToPatiensPage = new SidebarPage(page);
         await entryToPatiensPage.clickOnPatiensIcon()

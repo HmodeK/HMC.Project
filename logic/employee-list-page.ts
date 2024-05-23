@@ -17,6 +17,7 @@ export class EmployeeList extends BasePage {
     private employe: Locator;
     private employeeSearchResult: Locator;
     private pageTitle: Locator;
+    private activityButton: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -35,6 +36,7 @@ export class EmployeeList extends BasePage {
         this.cancelation = page.locator(`//*[contains(text(), 'ביטול')]`);
         this.employeeSearchResult = page.locator('//tbody[@class="MuiTableBody-root rtl-yvb2m1"]');
         this.pageTitle = page.locator('//h3[@class="MuiTypography-root MuiTypography-h3 MuiTypography-gutterBottom rtl-1n929hu"]');
+        this.activityButton = page.locator('//div[@role="combobox"]').first();
         this.initPage();
     }
 
@@ -50,10 +52,11 @@ export class EmployeeList extends BasePage {
         const count = await this.employeesList.count()
         for (let i = 0; i < count; i++) {
             if (await this.employeesList.nth(i).innerText() === employeeName) {
-                console.log(`Employee name "${employeeName}" exists in the list.`);;
+                console.log(`Employee ${employeeName} exists at index ${i}`);;
                 return true;
             }
         }
+        console.log(`Employee ${employeeName} is not found`); // Employee not found)
         return false;
     }
 
@@ -75,27 +78,6 @@ export class EmployeeList extends BasePage {
         return null; // Employee not found
     }
 
-    checkIfEmployeeNameExist = async (employeeName: string) => {
-        const count = await this.employeesList.count();
-        for (let i = 0; i < count; i++) {
-            if (await this.employeesList.nth(i).innerText() === employeeName) {
-
-                await this.page.waitForTimeout(1000)
-                console.log(`Employee ${employeeName} exists at index ${i}`);
-                return `Employee ${employeeName} exists at index ${i}`;
-
-            }
-        }
-        return null; // Employee not found
-    }
-
-
-
-
-
-
-
-    
 
     deleteTheEmployeeWeAreAdding = async (oper: string) => {
         await this.employeesList.nth(6).click()
@@ -212,12 +194,14 @@ export class EmployeeList extends BasePage {
     }
 
     SelectAnEmployeeAndUpdateTheirDetails = async (empName: string, employIsExist: string, oper: string) => {
-        await this.fillEmployeeName(empName)
-        await this.page.waitForTimeout(1000)
-        await this.checkIfEmployeeDetailsIsExist(employIsExist)
-        await this.employeesList.nth(6).click()
-        await this.page.waitForTimeout(1000)
-        await this.selectOperations(oper)
+        await this.fillEmployeeName(empName);
+        await this.page.waitForTimeout(1000);
+        await this.checkIfEmployeeDetailsIsExist(employIsExist);
+        await this.employeesList.nth(6).click();
+        await this.page.waitForTimeout(1000);
+        await this.selectOperations(oper);
+        await this.page.waitForTimeout(1000);
+
     }
 
     selectEmployeeStatus = async (emloyeStatus: string) => {
@@ -295,5 +279,57 @@ export class EmployeeList extends BasePage {
         await this.selectOperations(operation);
         await this.page.waitForTimeout(1000)
         await this.selectYesButtonPopup()
+    }
+
+    clickOnActivityButton = async () => {
+        await this.activityButton.click();
+    }
+
+
+    performCheckForTheEmployeesActivity = async (emStatus?: string) => {
+        
+        if (emStatus) {
+            await this.clickOnActivityButton();
+            await this.selectEmployeeStatus(emStatus);
+        }
+    
+        await this.page.waitForTimeout(1000);
+        await this.employeesList.nth(6).click();
+        await this.page.waitForTimeout(3000);
+    }
+
+    checkTextContent = async (expectedText: string): Promise<boolean> => {
+        const element = await this.page.$('//p[@class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary rtl-vk5so8"]');
+        if (element) {
+            const textContent = await element.textContent();
+            console.log(`Text content found: ${textContent}`);
+            return textContent === expectedText;
+        } else {
+            console.log('Element not found.');
+            return false;
+        }
+    };
+
+
+    getFilterButtonText = async (employeeStatus?: string): Promise<string> => {
+        if (employeeStatus) {
+            await this.clickOnActivityButton();
+            await this.page.waitForTimeout(1000);
+            await this.selectEmployeeStatus(employeeStatus);
+            await this.page.waitForTimeout(2000);
+        }
+        const buttonText = await this.activityButton.innerText();
+        console.log('The filter button text that is Received:', buttonText);
+        
+        // Check if the returned text exactly matches "לא פעיל" or "פעיל"
+        if (buttonText === "לא פעיל") {
+            console.log('Filter button text is "לא פעיל".');
+        } else if (buttonText === "פעיל") {
+            console.log('Filter button text is "פעיל".');
+        } else {
+            console.log('Filter button text does not match expected values.');
+        }
+    
+        return buttonText;
     }
 }
