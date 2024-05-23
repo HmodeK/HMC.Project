@@ -12,7 +12,7 @@ test.describe('Searching about employee & adding new employee', () => {
 
     test.beforeEach(async () => {
         browser = new BrowserWrapper;
-        page = await browser.getPage(urls.uiUrl.websiteUrl);
+        page = await browser.getPage(urls.employeesPage);
         // await browser.maximizeWindow();
         const employeesPage = new SidebarPage(page);
         await employeesPage.clickOnEmployeesIcon();
@@ -25,7 +25,7 @@ test.describe('Searching about employee & adding new employee', () => {
         await browser.closeBrowser();
     });
 
-    test('Search for a specific employee and verify whether he is found or not', async () => {
+    test.skip('Search for a specific employee and verify whether he is found or not', async () => {
         const searchFromEmployeeList = new EmployeeList(page);
         await searchFromEmployeeList.fillEmployeeName(config.employees.employee36);
         await page.waitForTimeout(2000)

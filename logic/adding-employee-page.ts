@@ -2,6 +2,7 @@ import { BasePage } from "../infra/browser/base-page";
 import { Locator, Page } from "playwright";
 import { employeeProfilePage } from "./employee-profile-page";
 import { EmployeeList } from "./employee-list-page";
+import { SidebarPage } from "./sidebar-page";
 
 export class AddingEmployeePage extends BasePage {
     private firstName: Locator;
@@ -27,6 +28,7 @@ export class AddingEmployeePage extends BasePage {
     private submitButton: Locator;
     private backToPreviousPage: Locator;
     private employeesList: Locator;
+    private pageTitle: Locator;
 
 
     constructor(page: Page) {
@@ -54,7 +56,16 @@ export class AddingEmployeePage extends BasePage {
         this.submitButton = page.locator('//button[@type="submit"]');
         this.backToPreviousPage = page.locator('//button[@type="button"]').last();
         this.employeesList = page.locator('//td[@class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium rtl-8epd4k"]');
+        this.pageTitle = page.locator('//h3[@class="MuiTypography-root MuiTypography-h3 rtl-1gx20ur"]');
         this.initPage();
+    }
+
+
+
+    getPageTitle = async (): Promise<string> => {
+        const pageTitle = await this.pageTitle.innerText();
+        console.log('Page Title:', pageTitle);
+        return pageTitle;
     }
 
 
@@ -292,26 +303,50 @@ export class AddingEmployeePage extends BasePage {
         return false
     }
 
-    clearTheField = async () => {
-        await this.phoneNumber.fill('');
-        await this.email.fill('');
-    }
     //// Create an new instance of {employee-profile-page}
-    makeClearAllInTheField = async () => {
+    makeClearInTheEmailField = async () => {
         const employeeNewInstance = new employeeProfilePage(this.page);
         await employeeNewInstance.selectEditingDetails();
-        await this.clearTheField();
+        await this.email.fill('');
         // await this.page.waitForTimeout(4000);
     }
 
-    makeTheNewUpdateForTheEmployeeDetails = async (newEmail: string, newPhoneNum: string, newGender: string, empName: string, employeName: string) => {
-        await this.email.fill(newEmail);
-        await this.phoneNumber.fill(newPhoneNum);
+    implementTheNewUpdateAboutGender = async (newGender: string) => {
         await this.clickOnGenderField();
         await this.selectGender(newGender);
+        await this.page.waitForTimeout(1000);
         await this.clickOnSubmitButton();
-        await this.page.waitForTimeout(2000);
-        const selectEmployeeAgainToReturnInTheEmployeeProfile = new EmployeeList(this.page);
-        await selectEmployeeAgainToReturnInTheEmployeeProfile.selectingEmployeeToEnterTheirProfile(empName, employeName)
+        await this.page.waitForTimeout(1000);
     }
+
+    performActionAfterTest = async (areTheDetailsUpdated: boolean, isTheEmployeeAdded: boolean, employeeName: string, employeeNameOneMore: string,
+        operation: string, gender: string, fullName: string, employeeBlocking: string, employeeList: EmployeeList, addingEmployeePage: AddingEmployeePage) => {
+        switch (true) {
+            case areTheDetailsUpdated:
+                // ביצוע פעולות ניקוי ספציפיות עבור הבדיקה האחרונה
+                const sidebarPage = new SidebarPage(this.page)
+                await sidebarPage.clickOnEmployeesIcon();
+                await employeeList.SelectAnEmployeeAndUpdateTheirDetails(employeeName, employeeNameOneMore, operation);
+                await addingEmployeePage.implementTheNewUpdateAboutGender(gender);
+                break;
+
+            case isTheEmployeeAdded:
+                await employeeList.checkIfEmployeeNameExistAndDeleteIt(fullName, employeeBlocking);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 }

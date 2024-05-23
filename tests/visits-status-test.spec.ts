@@ -12,7 +12,7 @@ test.describe('visits status test', () => {
 
     test.beforeEach(async () => {
         browser = new BrowserWrapper;
-        page = await browser.getPage(urls.uiUrl.websiteUrl)
+        page = await browser.getPage(urls.employeesPage)
         // await browser.maximizeWindow()
         const clickOnVistsCancelled = new DashboardPage(page)
         await clickOnVistsCancelled.clickOnVisitsCancelledIcon()

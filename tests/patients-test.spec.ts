@@ -13,7 +13,7 @@ test.describe('Searching about employee & adding new employee', () => {
 
     test.beforeEach(async () => {
         browser = new BrowserWrapper;
-        page = await browser.getPage(urls.uiUrl.websiteUrl);
+        page = await browser.getPage(urls.patientsPage);
         // await browser.maximizeWindow();
         const entryToPatiensPage = new SidebarPage(page);
         await entryToPatiensPage.clickOnPatiensIcon()
@@ -31,10 +31,10 @@ test.describe('Searching about employee & adding new employee', () => {
         expect(await searchAnPatiens.checkIfSpecificPatientIsExist('מטופל דגומה-457')).toBeTruthy();
     });
 
-    test('Search for a health insurance fund using (filter) && verify the name we are looking for is here', async () => {
+    test('Search for a clinic using (filter) && verify the name we are looking for is here', async () => {
         const searchAnHealthFund = new PatientsListPage(page)
-        await searchAnHealthFund.performSelctingFromHealthFundList(config.healthFunds.meuhedet)
-        expect(await searchAnHealthFund.checkIfHealthFundsNameIsExist(config.healthFunds.meuhedet)).toBeTruthy();
+        await searchAnHealthFund.performSelctingFromClinicList(config.healthFunds.meuhedet)
+        expect(await searchAnHealthFund.checkIfClinicsNameIsExist(config.healthFunds.meuhedet)).toBeTruthy();
     });
 
     test('Adding a new patient && check if the new patient has been added >> Through the popup that pops up', async () => {

@@ -9,6 +9,7 @@ export class employeeProfilePage extends BasePage {
     private blockingEmployeeButton: Locator
     private passResetButton: Locator
     private yesButtonToBlock: Locator
+    private pageTitleFromEmployeProfilePage: Locator
 
     constructor(page: Page) {
         super(page);
@@ -17,7 +18,13 @@ export class employeeProfilePage extends BasePage {
         this.blockingEmployeeButton = page.locator('//button[@type="button"]').nth(3);
         this.passResetButton = page.locator('//button[@type="submit"]');
         this.yesButtonToBlock = page.locator('//button[@type="button"]').nth(10);
+        this.pageTitleFromEmployeProfilePage = page.locator('//h4[@class="MuiTypography-root MuiTypography-h4 MuiTypography-gutterBottom rtl-1bhrkuh"]');
         this.initPage();
+    }
+
+
+    getPageTitle = async (): Promise<string> => {
+        return await this.pageTitleFromEmployeProfilePage.innerText()
     }
 
     selectEditingDetails = async () => {
