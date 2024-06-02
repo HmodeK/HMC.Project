@@ -18,6 +18,7 @@ export class EmployeeList extends BasePage {
     private employeeSearchResult: Locator;
     private pageTitle: Locator;
     private activityButton: Locator;
+    private menuOfTheListButton: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -37,18 +38,24 @@ export class EmployeeList extends BasePage {
         this.employeeSearchResult = page.locator('//tbody[@class="MuiTableBody-root rtl-yvb2m1"]');
         this.pageTitle = page.locator('//h3[@class="MuiTypography-root MuiTypography-h3 MuiTypography-gutterBottom rtl-1n929hu"]');
         this.activityButton = page.locator('//div[@role="combobox"]').first();
+        this.menuOfTheListButton = page.locator('//div[@aria-haspopup="listbox"]').last(); ////ul[@class="MuiList-root MuiList-padding MuiMenu-list rtl-r8u8y9"]
         this.initPage();
     }
 
     getPageTitle = async (): Promise<string> => {
-        return await this.pageTitle.innerText()
+        await this.page.waitForTimeout(1000);
+        const title = await this.pageTitle.innerText();
+        console.log(`Page Title: ${title}`);
+        return title;
     }
+    
 
     fillEmployeeName = async (employeeName: string) => {
         await this.searchBar.fill(employeeName)
     }
 
     checkIfEmployeeNameIsExist = async (employeeName: string): Promise<boolean> => {
+        await this.page.waitForTimeout(1000);
         const count = await this.employeesList.count()
         for (let i = 0; i < count; i++) {
             if (await this.employeesList.nth(i).innerText() === employeeName) {
@@ -186,12 +193,29 @@ export class EmployeeList extends BasePage {
         await this.employe.click()
     }
 
-    selectingEmployeeToEnterTheirProfile = async (empName: string, employDetail: string) => {
-        await this.fillEmployeeName(empName)
-        await this.page.waitForTimeout(1000)
-        await this.checkIfEmployeeDetailsIsExist(employDetail)
-        await this.selectEmployee()
+    selectingEmployeeToEnterTheirProfile = async (employeeName: string, employeeDetailIsExist?: string): Promise<boolean> => {
+        try {
+            await this.fillEmployeeName(employeeName);
+            await this.page.waitForTimeout(2000);
+    
+            if (employeeDetailIsExist) {
+                const detailsExist = await this.checkIfEmployeeDetailsIsExist(employeeDetailIsExist);
+                if (!detailsExist) {
+                    console.error(`Employee details "${employeeDetailIsExist}" not found.`);
+                    return false; // Exit function if details are not found
+                }
+            }
+    
+            await this.selectEmployee();
+            await this.page.waitForTimeout(1000);
+            return true; // Operation successful
+        } catch (error) {
+            console.error(`Error in selecting employee profile: ${error}`);
+            return false; // Operation failed
+        }
     }
+    
+
 
     SelectAnEmployeeAndUpdateTheirDetails = async (empName: string, employIsExist: string, oper: string) => {
         await this.fillEmployeeName(empName);
@@ -228,7 +252,6 @@ export class EmployeeList extends BasePage {
         }
 
     }
-
     checkIfEmployeeDetailsIsExist = async (employeeDetail1: string): Promise<boolean> => {
         const count = await this.employeeSearchResult.count()
         for (let i = 0; i < count; i++) {
@@ -237,8 +260,10 @@ export class EmployeeList extends BasePage {
                 return true;
             }
         }
+        console.log(`Employee details "${employeeDetail1}" not found`); // Print message if employee details not found
         return false;
     }
+
 
     checkIfEmployeeIsExistToSearchAgainInAnotherActivityStatus = async (employeeDetail1: string, emStatus: string): Promise<boolean> => {
         const count = await this.employeeSearchResult.count();
@@ -287,12 +312,12 @@ export class EmployeeList extends BasePage {
 
 
     performCheckForTheEmployeesActivity = async (emStatus?: string) => {
-        
+
         if (emStatus) {
             await this.clickOnActivityButton();
             await this.selectEmployeeStatus(emStatus);
         }
-    
+
         await this.page.waitForTimeout(1000);
         await this.employeesList.nth(6).click();
         await this.page.waitForTimeout(3000);
@@ -320,7 +345,7 @@ export class EmployeeList extends BasePage {
         }
         const buttonText = await this.activityButton.innerText();
         console.log('The filter button text that is Received:', buttonText);
-        
+
         // Check if the returned text exactly matches "לא פעיל" or "פעיל"
         if (buttonText === "לא פעיל") {
             console.log('Filter button text is "לא פעיל".');
@@ -329,7 +354,60 @@ export class EmployeeList extends BasePage {
         } else {
             console.log('Filter button text does not match expected values.');
         }
-    
+
         return buttonText;
+    }
+
+    filterListByNumberOfMenu = async (menuNumber: string) => {
+        const element = await this.page.$('//ul[@class="MuiList-root MuiList-padding MuiMenu-list rtl-r8u8y9"]');
+
+        if (element) {
+
+            const listOfMenuNumber = await element.$$('li');
+            let targetElement = null;
+            for (const status of listOfMenuNumber) {
+                const text = await status.textContent();
+                if (text === menuNumber) {
+                    targetElement = status;
+                    break;
+                }
+            }
+            if (targetElement) {
+                await targetElement.click();
+            } else {
+                throw new Error(`This menuNumber "${menuNumber}" is not found in the list.`);
+            }
+        } else {
+            throw new Error('UL element not found.');
+        }
+
+    }
+
+    clickOnMenuNumberButton = async () => {
+        await this.page.evaluate(() => {
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+        await this.menuOfTheListButton.click();
+    }
+
+    chooseMenuNumber = async (menuNum: number) => {
+        await this.clickOnMenuNumberButton();
+        await this.filterListByNumberOfMenu(menuNum.toString());
+        await this.page.waitForTimeout(1000);
+
+    }
+
+    howManyEmployeeInTheList = async () => {
+        const element = await this.page.$('//tbody[@class="MuiTableBody-root rtl-yvb2m1"]');
+
+        if (element) {
+            const listOfEmployees = await element.$$('tr');
+            const employeeCount = listOfEmployees.length;
+            console.log(`Number of employees in the list: ${employeeCount}`);
+            return employeeCount;
+
+        } else {
+            throw new Error(`The element representing the employee list is not found.`);
+        }
     }
 }

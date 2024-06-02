@@ -5,15 +5,17 @@ import config from "../configFiles/config.json"
 import { SidebarPage } from "../logic/sidebar-page";
 import { EmployeeList } from "../logic/employee-list-page";
 import { AddingEmployeePage } from "../logic/adding-employee-page";
-import { employeeProfilePage } from "../logic/employee-profile-page";
+import { EmployeeProfilePage } from "../logic/employee-profile-page";
 
-test.describe('Employee list page', () => {
+test.describe('Employee list page & profile page', () => {
     let browser: BrowserWrapper;
     let page: Page;
     let employeeList: EmployeeList;
     let addingEmployeePage: AddingEmployeePage;
+    let employeeProfilePage: EmployeeProfilePage;
     let areTheDetailsUpdated = false;
     let isTheEmployeeAdded = false;
+    let areTheMaritalIsUpdated = false;
 
 
     test.beforeEach(async () => {
@@ -23,40 +25,96 @@ test.describe('Employee list page', () => {
         await sidebarPage.clickOnEmployeesIcon();
         employeeList = new EmployeeList(page);
         addingEmployeePage = new AddingEmployeePage(page);
+        employeeProfilePage = new EmployeeProfilePage(page)
     });
 
     test.afterEach(async () => {
-        await addingEmployeePage.performActionAfterTest(areTheDetailsUpdated, isTheEmployeeAdded, config.employees.employee36, config.employees.employee36,
-            config.OperationsInEmployeesPage.update, config.gender.male, config.employeeWeAreLookingFor.fullName, config.OperationsInEmployeesPage.employeeBlocking,
-            employeeList, addingEmployeePage);
+        try {
+            // Check if details were updated or if an employee was added
+            if (areTheDetailsUpdated || isTheEmployeeAdded) {
+                await addingEmployeePage.performActionAfterTest(
+                    areTheDetailsUpdated,
+                    isTheEmployeeAdded,
+                    config.employees.employee36,
+                    config.employees.employee36,
+                    config.OperationsInEmployeesPage.update,
+                    config.gender.male,
+                    config.employeeWeAreLookingFor.fullName,
+                    config.OperationsInEmployeesPage.employeeBlocking,
+                    employeeList,
+                    addingEmployeePage
+                );
 
-        //  איפוס הערכים לאחר כל טסט
-        areTheDetailsUpdated = false;
-        isTheEmployeeAdded = false;
+                // Reset values after each test if the condition is met
+                areTheDetailsUpdated = false;
+                isTheEmployeeAdded = false;
+            }
 
-        // הפעולה הדיפולטיבית שתתבצע בכל מקרה
-        await browser.closeBrowser();
+            // Check if marital status was updated
+            if (areTheMaritalIsUpdated) {
+                await employeeProfilePage.selectEditingDetails();
+                await addingEmployeePage.performUpdatingAboutMaritalStatus(config.maritalStatus.Married);
+
+                // Reset marital status update flag
+                areTheMaritalIsUpdated = false;
+            }
+
+        } catch (error) {
+            console.error(`Error during afterEach hook: ${error}`);
+        } finally {
+            // Default action to be performed in any case
+            await browser.closeBrowser();
+        }
     });
 
 
 
-    test.describe('Navigation to the correct page ', () => {
+    test.describe('Verify that correctly navigates to the desired page and accurately displays the expected details ', () => {
 
         test('verify Navigation to the list of employees page.', async () => {
             expect(await employeeList.getPageTitle()).toContain('רשימת עובדים')
         });
 
         test('When an employee is selected, we verify that we are directed to the profile of the selected employee.', async () => {
-            await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36, "");
-            const employeProfile = new employeeProfilePage(page);
-            expect(await employeProfile.getPageTitle()).toContain('פרופיל עובד');
+            await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
+            expect(await employeeProfilePage.getPageTitle()).toContain('פרופיל עובד');
         });
 
         test('Verify that on clicking the button  " add a new employee ", you are directed to the correct page.', async () => {
             await employeeList.clickOnAddingNewEmployeeButton();
             expect(await addingEmployeePage.getPageTitle()).toContain('הוספת עובד');
         });
+
+        test('Verify that selecting an employee redirects to their profile page and that their name is correctly displayed in the page title.', async () => {
+            await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
+            expect(await employeeProfilePage.getEmployeeNameInTheTitle()).toContain('עובד employee 36')
+        });
+
+
+        test('Navigate to the appropriate page and verify the presence of the desired details within the container.', async () => {
+            await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
+            expect(await employeeProfilePage.getEmployeeDetailInTheContainerOfDetails('עובד employee 36')).toBeTruthy()
+        });
+
+        test('Verify that clicking on {Edit Details} button redirects to their correctly editing page.', async () => {
+            await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
+            const pageTitle = await employeeProfilePage.getTitleInEditingDetailsPage();
+            expect(pageTitle).toBe('עריכת עובד עובד employee 36');
+        });
+
+        test('Verify that clicking on {Password Reset} button redirects to their password reset popup.', async () => {
+            await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
+            const titleInPopup = await employeeProfilePage.getTitleInPasswordResetPopup();
+            expect(titleInPopup).toBe('איפוס סיסמה');
+        });
+
+        test('Verify that clicking on {Employee Blocking} button redirects to their Employee Blocking popup.', async () => {
+            await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
+            const titleInEmployeeBlockingPopup = await employeeProfilePage.getTitleInEmployeeBlockingPopup();
+            expect(titleInEmployeeBlockingPopup).toBe('האם אתה בטוח שאתה רוצה לחסום עובד employee 36?');
+        });
     });
+
 
 
     test.describe('search inputs tests cases', () => {
@@ -144,7 +202,7 @@ test.describe('Employee list page', () => {
                 areTheDetailsUpdated = true;
             } else {
                 console.log('The employee does not exist in the list. Skipping update operation.');
-                expect(!isEmployeeExists).toBeFalsy();
+                expect(!isEmployeeExists).toBeFalsy();  //מוודאים שהעובד באמת לא קיים ברשימה.
             }
         });
 
@@ -156,13 +214,82 @@ test.describe('Employee list page', () => {
 
     test.describe('table actions', () => {
 
-        test('Search for a specific employee and verify if they exist in the employee list', async () => {
+        test('Search for a specific employee and verify if is exist in the employee list', async () => {
             const searchSpecificEmployee = await employeeList.checkIfEmployeeNameIsExist(config.employees.employee36);
-            await page.waitForTimeout(2000)
             expect(searchSpecificEmployee).toBeTruthy();
             // expect(await employeeList.checkIfEmployeeNameIsExist('asasasas')).toBeTruthy(); // *** fail test ***
         });
+
+        test('Filter the employee list to display only 20 entries, then verify the count of employees in the filtered list.', async () => {
+            await employeeList.chooseMenuNumber(20);
+            const employeeCount = await employeeList.howManyEmployeeInTheList();
+            expect(employeeCount).toBe(20);
+        });
+
     });
+
+
+
+    test.describe('profile actions', () => {
+
+        test('Verify that clicking on an employee link navigates to the employee list page.', async () => {
+            await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
+            await employeeProfilePage.clickOnEmployeeLink();
+            const title = await employeeList.getPageTitle();
+            expect(title).toBe('רשימת עובדים');
+        });
+
+
+        test('Verify that the selected employees details are updated correctly ..', async () => {
+            const isEmployeeExists1 = await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36,);
+
+            if (isEmployeeExists1) { // בדיקה האם העובד קיים ברשימה
+                // await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
+                await employeeProfilePage.selectEditingDetails();
+                await addingEmployeePage.performUpdatingAboutMaritalStatus(config.maritalStatus.single)
+                await page.waitForTimeout(4000)
+
+                await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
+                const updatesIsSuccessful = await employeeProfilePage.getEmployeeDetailInTheContainerOfDetails('רווק')
+                expect(updatesIsSuccessful).toBe(true);
+                areTheMaritalIsUpdated = true;
+            
+            } else {
+                console.log('The employee does not exist in the list. Skipping update operation.');
+                expect(!isEmployeeExists1).toBeFalsy();  //מוודאים שהעובד באמת לא קיים ברשימה.
+            }
+        });
+
+
+
+    });
+
+
+    // test.afterEach(async () => {
+    //     try {
+    //         await addingEmployeePage.performActionAfterTest(
+                
+    //             areTheDetailsUpdated,
+    //             isTheEmployeeAdded,
+    //             employeeList,
+    //             addingEmployeePage
+    //         );
+    
+    //         // איפוס הערכים לאחר כל בדיקה
+    //         areTheDetailsUpdated = false;
+    //         isTheEmployeeAdded = false;
+    
+    //         await addingEmployeePage.handleMaritalStatusUpdate(
+    //             employeeProfilePage,
+    //             addingEmployeePage,
+    //             areTheMaritalIsUpdated
+    //         );
+    //     } catch (error) {
+    //         console.error(`Error during afterEach hook: ${error}`);
+    //     } finally {
+    //         await browser.closeBrowser();
+    //     }
+    // });
 
     //alerts
 });
