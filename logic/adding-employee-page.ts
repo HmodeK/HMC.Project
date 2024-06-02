@@ -1,6 +1,6 @@
 import { BasePage } from "../infra/browser/base-page";
 import { Locator, Page } from "playwright";
-import { employeeProfilePage } from "./employee-profile-page";
+import { EmployeeProfilePage } from "./employee-profile-page";
 import { EmployeeList } from "./employee-list-page";
 import { SidebarPage } from "./sidebar-page";
 
@@ -194,7 +194,7 @@ export class AddingEmployeePage extends BasePage {
         await this.address.fill(address)
     }
 
-    clickToMaritalStatusField = async () => {
+    clickOnMaritalStatusField = async () => {
         await this.maritalStatusField.click()
     }
 
@@ -282,7 +282,7 @@ export class AddingEmployeePage extends BasePage {
         await this.fillBirthday(birthDay)
         await this.fillPhoneNumber(phoNum)
         await this.fillAnotherPhone(anothPhone)
-        await this.clickToMaritalStatusField()
+        await this.clickOnMaritalStatusField()
         await this.selectOnMaritalStatus(maritalStatus)
         await this.fillAddress(address)
         await this.clickOnGenderField()
@@ -305,7 +305,7 @@ export class AddingEmployeePage extends BasePage {
 
     //// Create an new instance of {employee-profile-page}
     makeClearInTheEmailField = async () => {
-        const employeeNewInstance = new employeeProfilePage(this.page);
+        const employeeNewInstance = new EmployeeProfilePage(this.page);
         await employeeNewInstance.selectEditingDetails();
         await this.email.fill('');
         // await this.page.waitForTimeout(4000);
@@ -340,13 +340,46 @@ export class AddingEmployeePage extends BasePage {
     }
 
 
+    performUpdatingAboutMaritalStatus = async (marStatus:string) => {
+        await this.clickOnMaritalStatusField();
+        await this.selectOnMaritalStatus(marStatus);
+        await this.page.waitForTimeout(1000);
+        await this.clickOnSubmitButton();
+        await this.page.waitForTimeout(1000);
+}
 
+// performActionAfterTest = async (areTheDetailsUpdated: boolean, isTheEmployeeAdded: boolean,
+//     employeeList: EmployeeList, addingEmployeePage: AddingEmployeePage) => {
+       
+//        const sidebarPage = new SidebarPage(this.page)
 
+//    switch (true) {
+//        case areTheDetailsUpdated:
+//            // ביצוע פעולות ניקוי ספציפיות עבור הבדיקה האחרונה
+//            await sidebarPage.clickOnEmployeesIcon();
+//            await employeeList.SelectAnEmployeeAndUpdateTheirDetails(config.employees.employee36, config.employees.employee36, config.OperationsInEmployeesPage.update);
+//            await addingEmployeePage.implementTheNewUpdateAboutGender(config.gender.male);
+//            break;
 
+//        case isTheEmployeeAdded:
+//            await employeeList.checkIfEmployeeNameExistAndDeleteIt(config.employeeWeAreLookingFor.fullName, config.OperationsInEmployeesPage.employeeBlocking);
+//            break;
 
+//        default:
+//            break;
+//    }
+// }
 
+// handleMaritalStatusUpdate = async ( employeeProfilePage: EmployeeProfilePage,
+//    addingEmployeePage: AddingEmployeePage,
+//    areTheMaritalIsUpdated: boolean) => {
 
+//    if (areTheMaritalIsUpdated) {
 
+//        await employeeProfilePage.selectEditingDetails();
+//        await addingEmployeePage.performUpdatingAboutMaritalStatus(config.maritalStatus.Married);
 
-
+//        areTheMaritalIsUpdated = false;
+//    }
+// }
 }
