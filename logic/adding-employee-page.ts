@@ -60,8 +60,6 @@ export class AddingEmployeePage extends BasePage {
         this.initPage();
     }
 
-
-
     getPageTitle = async (): Promise<string> => {
         const pageTitle = await this.pageTitle.innerText();
         console.log('Page Title:', pageTitle);
@@ -345,41 +343,6 @@ export class AddingEmployeePage extends BasePage {
         await this.selectOnMaritalStatus(marStatus);
         await this.page.waitForTimeout(1000);
         await this.clickOnSubmitButton();
-        await this.page.waitForTimeout(1000);
+        await this.page.waitForTimeout(3000);
 }
-
-// performActionAfterTest = async (areTheDetailsUpdated: boolean, isTheEmployeeAdded: boolean,
-//     employeeList: EmployeeList, addingEmployeePage: AddingEmployeePage) => {
-       
-//        const sidebarPage = new SidebarPage(this.page)
-
-//    switch (true) {
-//        case areTheDetailsUpdated:
-//            // ביצוע פעולות ניקוי ספציפיות עבור הבדיקה האחרונה
-//            await sidebarPage.clickOnEmployeesIcon();
-//            await employeeList.SelectAnEmployeeAndUpdateTheirDetails(config.employees.employee36, config.employees.employee36, config.OperationsInEmployeesPage.update);
-//            await addingEmployeePage.implementTheNewUpdateAboutGender(config.gender.male);
-//            break;
-
-//        case isTheEmployeeAdded:
-//            await employeeList.checkIfEmployeeNameExistAndDeleteIt(config.employeeWeAreLookingFor.fullName, config.OperationsInEmployeesPage.employeeBlocking);
-//            break;
-
-//        default:
-//            break;
-//    }
-// }
-
-// handleMaritalStatusUpdate = async ( employeeProfilePage: EmployeeProfilePage,
-//    addingEmployeePage: AddingEmployeePage,
-//    areTheMaritalIsUpdated: boolean) => {
-
-//    if (areTheMaritalIsUpdated) {
-
-//        await employeeProfilePage.selectEditingDetails();
-//        await addingEmployeePage.performUpdatingAboutMaritalStatus(config.maritalStatus.Married);
-
-//        areTheMaritalIsUpdated = false;
-//    }
-// }
 }

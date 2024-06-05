@@ -57,6 +57,8 @@ export class EmployeeList extends BasePage {
     checkIfEmployeeNameIsExist = async (employeeName: string): Promise<boolean> => {
         await this.page.waitForTimeout(1000);
         const count = await this.employeesList.count()
+        await this.page.waitForTimeout(1000);
+
         for (let i = 0; i < count; i++) {
             if (await this.employeesList.nth(i).innerText() === employeeName) {
                 console.log(`Employee ${employeeName} exists at index ${i}`);;
@@ -260,7 +262,6 @@ export class EmployeeList extends BasePage {
                 return true;
             }
         }
-        console.log(`Employee details "${employeeDetail1}" not found`); // Print message if employee details not found
         return false;
     }
 
