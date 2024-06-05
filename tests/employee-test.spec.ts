@@ -6,6 +6,7 @@ import { SidebarPage } from "../logic/sidebar-page";
 import { EmployeeList } from "../logic/employee-list-page";
 import { AddingEmployeePage } from "../logic/adding-employee-page";
 import { EmployeeProfilePage } from "../logic/employee-profile-page";
+import { TestCleanup } from "../infra/utils/test-cleamup";
 
 test.describe('Employee list page & profile page', () => {
     let browser: BrowserWrapper;
@@ -13,6 +14,7 @@ test.describe('Employee list page & profile page', () => {
     let employeeList: EmployeeList;
     let addingEmployeePage: AddingEmployeePage;
     let employeeProfilePage: EmployeeProfilePage;
+    let testCleanup: TestCleanup;
     let areTheDetailsUpdated = false;
     let isTheEmployeeAdded = false;
     let areTheMaritalIsUpdated = false;
@@ -26,47 +28,14 @@ test.describe('Employee list page & profile page', () => {
         employeeList = new EmployeeList(page);
         addingEmployeePage = new AddingEmployeePage(page);
         employeeProfilePage = new EmployeeProfilePage(page)
-    });
+        testCleanup = new TestCleanup(addingEmployeePage, employeeList, employeeProfilePage);
 
+    });
+    
     test.afterEach(async () => {
-        try {
-            // Check if details were updated or if an employee was added
-            if (areTheDetailsUpdated || isTheEmployeeAdded) {
-                await addingEmployeePage.performActionAfterTest(
-                    areTheDetailsUpdated,
-                    isTheEmployeeAdded,
-                    config.employees.employee36,
-                    config.employees.employee36,
-                    config.OperationsInEmployeesPage.update,
-                    config.gender.male,
-                    config.employeeWeAreLookingFor.fullName,
-                    config.OperationsInEmployeesPage.employeeBlocking,
-                    employeeList,
-                    addingEmployeePage
-                );
-
-                // Reset values after each test if the condition is met
-                areTheDetailsUpdated = false;
-                isTheEmployeeAdded = false;
-            }
-
-            // Check if marital status was updated
-            if (areTheMaritalIsUpdated) {
-                await employeeProfilePage.selectEditingDetails();
-                await addingEmployeePage.performUpdatingAboutMaritalStatus(config.maritalStatus.Married);
-
-                // Reset marital status update flag
-                areTheMaritalIsUpdated = false;
-            }
-
-        } catch (error) {
-            console.error(`Error during afterEach hook: ${error}`);
-        } finally {
-            // Default action to be performed in any case
-            await browser.closeBrowser();
-        }
+        await testCleanup.performCleanup(areTheDetailsUpdated, isTheEmployeeAdded, areTheMaritalIsUpdated);
+        await browser.closeBrowser();
     });
-
 
 
     test.describe('Verify that correctly navigates to the desired page and accurately displays the expected details ', () => {
@@ -171,8 +140,6 @@ test.describe('Employee list page & profile page', () => {
         });
     });
 
-
-
     test.describe('operations', () => {
 
         test('Verify if the new employee we added has been deleted', async () => {
@@ -206,10 +173,6 @@ test.describe('Employee list page & profile page', () => {
             }
         });
 
-
-        //הוספה CASES
-        //עדכון.....
-        //
     });
 
     test.describe('table actions', () => {
@@ -228,8 +191,6 @@ test.describe('Employee list page & profile page', () => {
 
     });
 
-
-
     test.describe('profile actions', () => {
 
         test('Verify that clicking on an employee link navigates to the employee list page.', async () => {
@@ -239,7 +200,6 @@ test.describe('Employee list page & profile page', () => {
             expect(title).toBe('רשימת עובדים');
         });
 
-
         test('Verify that the selected employees details are updated correctly ..', async () => {
             const isEmployeeExists1 = await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36,);
 
@@ -247,12 +207,10 @@ test.describe('Employee list page & profile page', () => {
                 // await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
                 await employeeProfilePage.selectEditingDetails();
                 await addingEmployeePage.performUpdatingAboutMaritalStatus(config.maritalStatus.single)
-                await page.waitForTimeout(4000)
-
                 await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
                 const updatesIsSuccessful = await employeeProfilePage.getEmployeeDetailInTheContainerOfDetails('רווק')
                 expect(updatesIsSuccessful).toBe(true);
-                areTheMaritalIsUpdated = true;
+                areTheMaritalIsUpdated = true; //cleanup
             
             } else {
                 console.log('The employee does not exist in the list. Skipping update operation.');
@@ -261,35 +219,6 @@ test.describe('Employee list page & profile page', () => {
         });
 
 
-
     });
 
-
-    // test.afterEach(async () => {
-    //     try {
-    //         await addingEmployeePage.performActionAfterTest(
-                
-    //             areTheDetailsUpdated,
-    //             isTheEmployeeAdded,
-    //             employeeList,
-    //             addingEmployeePage
-    //         );
-    
-    //         // איפוס הערכים לאחר כל בדיקה
-    //         areTheDetailsUpdated = false;
-    //         isTheEmployeeAdded = false;
-    
-    //         await addingEmployeePage.handleMaritalStatusUpdate(
-    //             employeeProfilePage,
-    //             addingEmployeePage,
-    //             areTheMaritalIsUpdated
-    //         );
-    //     } catch (error) {
-    //         console.error(`Error during afterEach hook: ${error}`);
-    //     } finally {
-    //         await browser.closeBrowser();
-    //     }
-    // });
-
-    //alerts
 });
