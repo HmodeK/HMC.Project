@@ -149,7 +149,7 @@ test.describe('Employee list page & profile page', () => {
         });
 
 
-        test('Selects a employee & checks a password reset operation"', async () => {
+        test('Selects a employee & check a password reset operation by "alert text" ', async () => {
             await employeeList.selectEmployeeAndResetPassword(config.employees.employee36, config.OperationsInEmployeesPage.passwordReset,
                 config.passwordReset.newPassword, config.passwordReset.verifPassword)
             const isAlertSuccessful = await employeeList.checkIfAlertContainsText('סיסמה שונתה בהצלחה');
@@ -219,6 +219,14 @@ test.describe('Employee list page & profile page', () => {
         });
 
 
+        test('Verify that clicking on an employee blocking button removes the employee from the list of employees.', async () => {
+            await employeeList.activateEmployeeStatus(config.employeeWeAreLookingFor.fullName,config.activityStatus.inactive,config.employeeWeAreLookingFor.fullName);
+            await employeeProfilePage.performBlockForAnEmployee();
+            await employeeProfilePage.clickOnEmployeeLink()
+            await page.waitForTimeout(4000)
+            const isEmployeeExistsInTheList = await employeeList.checkIfEmployeeNameIsExist(config.employeeWeAreLookingFor.fullName);
+            expect(isEmployeeExistsInTheList).toBe(false);
+        });
     });
 
 });

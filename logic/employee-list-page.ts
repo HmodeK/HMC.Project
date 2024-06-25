@@ -1,5 +1,6 @@
 import { BasePage } from "../infra/browser/base-page";
 import { Locator, Page } from "playwright";
+import { SidebarPage } from "./sidebar-page";
 
 export class EmployeeList extends BasePage {
     private searchBar: Locator;
@@ -19,6 +20,7 @@ export class EmployeeList extends BasePage {
     private pageTitle: Locator;
     private activityButton: Locator;
     private menuOfTheListButton: Locator;
+    private makeActiveButton: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -39,6 +41,7 @@ export class EmployeeList extends BasePage {
         this.pageTitle = page.locator('//h3[@class="MuiTypography-root MuiTypography-h3 MuiTypography-gutterBottom rtl-1n929hu"]');
         this.activityButton = page.locator('//div[@role="combobox"]').first();
         this.menuOfTheListButton = page.locator('//div[@aria-haspopup="listbox"]').last(); ////ul[@class="MuiList-root MuiList-padding MuiMenu-list rtl-r8u8y9"]
+        this.makeActiveButton = page.locator('//p[@class="MuiTypography-root MuiTypography-body2 MuiListItemText-primary rtl-vk5so8"]')
         this.initPage();
     }
 
@@ -48,7 +51,7 @@ export class EmployeeList extends BasePage {
         console.log(`Page Title: ${title}`);
         return title;
     }
-    
+
 
     fillEmployeeName = async (employeeName: string) => {
         await this.searchBar.fill(employeeName)
@@ -199,15 +202,15 @@ export class EmployeeList extends BasePage {
         try {
             await this.fillEmployeeName(employeeName);
             await this.page.waitForTimeout(2000);
-    
+
             if (employeeDetailIsExist) {
-                const detailsExist = await this.checkIfEmployeeDetailsIsExist(employeeDetailIsExist);
+                const detailsExist = await this.checkIfEmployeeNameIsExist(employeeDetailIsExist);
                 if (!detailsExist) {
                     console.error(`Employee details "${employeeDetailIsExist}" not found.`);
                     return false; // Exit function if details are not found
                 }
             }
-    
+
             await this.selectEmployee();
             await this.page.waitForTimeout(1000);
             return true; // Operation successful
@@ -216,13 +219,13 @@ export class EmployeeList extends BasePage {
             return false; // Operation failed
         }
     }
-    
+
 
 
     SelectAnEmployeeAndUpdateTheirDetails = async (empName: string, employIsExist: string, oper: string) => {
         await this.fillEmployeeName(empName);
         await this.page.waitForTimeout(1000);
-        await this.checkIfEmployeeDetailsIsExist(employIsExist);
+        await this.checkIfEmployeeNameIsExist(employIsExist);
         await this.employeesList.nth(6).click();
         await this.page.waitForTimeout(1000);
         await this.selectOperations(oper);
@@ -254,17 +257,6 @@ export class EmployeeList extends BasePage {
         }
 
     }
-    checkIfEmployeeDetailsIsExist = async (employeeDetail1: string): Promise<boolean> => {
-        const count = await this.employeeSearchResult.count()
-        for (let i = 0; i < count; i++) {
-            if (await this.employeeSearchResult.nth(i).innerText() === employeeDetail1) {
-                await this.page.waitForTimeout(2000)
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     checkIfEmployeeIsExistToSearchAgainInAnotherActivityStatus = async (employeeDetail1: string, emStatus: string): Promise<boolean> => {
         const count = await this.employeeSearchResult.count();
@@ -411,4 +403,28 @@ export class EmployeeList extends BasePage {
             throw new Error(`The element representing the employee list is not found.`);
         }
     }
+
+    activateEmployeeStatus = async (emName: string, status: string, employeName: string): Promise<void> => {
+
+        const sidebarPage = new SidebarPage(this.page)
+        // Check if the employee name exists
+        const isEmployeeExists = await this.checkIfEmployeeNameIsExist(emName);
+
+        if (isEmployeeExists) {
+            await this.selectingEmployeeToEnterTheirProfile(emName);
+            console.log(`Navigated to the profile of ${emName}.`);
+        } else {
+            // Perform actions to activate employee status if employee does not exist
+            await this.performCheckForTheEmployeesActivity(status);
+            await this.page.waitForTimeout(1000);
+            await this.fillEmployeeName(employeName)
+            await this.makeActiveButton.click();
+            await this.page.waitForTimeout(1000);
+            await this.selectYesButtonPopup();
+            console.log(`Employee ${emName} has been successfully activated.`);
+            await sidebarPage.clickOnEmployeesIcon();
+            await this.selectingEmployeeToEnterTheirProfile(employeName);
+
+        }
+    };
 }

@@ -14,11 +14,11 @@ export class TestCleanup {
         this.employeeProfilePage = employeeProfilePage;
     }
 
-    async performCleanup(
+     performCleanup = async(
         areTheDetailsUpdated: boolean,
         isTheEmployeeAdded: boolean,
         areTheMaritalIsUpdated: boolean
-    ) {
+    )=> {
         try {
             if (areTheDetailsUpdated || isTheEmployeeAdded) {
                 await this.addingEmployeePage.performActionAfterTest(

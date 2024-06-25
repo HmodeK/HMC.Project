@@ -41,14 +41,14 @@ export class EmployeeProfilePage extends BasePage {
         console.log(`Page Title: ${title}`);
         return title;
     }
-    
+
     getEmployeeNameInTheTitle = async (): Promise<string> => {
         const employeeName = await this.employeeNameInTheTitle.innerText();
         console.log(`Employee Name in Title: ${employeeName}`);
         return employeeName;
     }
-    
-    
+
+
     getTitleInEditingDetailsPage = async (): Promise<string> => {
         await this.selectEditingDetails()
         await this.page.waitForTimeout(1000)
@@ -72,8 +72,8 @@ export class EmployeeProfilePage extends BasePage {
         console.log(`Title in employee blocking popup: ${titleInPopup1}`);
         return titleInPopup1;
     }
-     
-    
+
+
     getEmployeeDetailInTheContainerOfDetails = async (detailsOfEmployee: string) => {
         return await this.compareNameInPTag(detailsOfEmployee);
     }
@@ -105,9 +105,9 @@ export class EmployeeProfilePage extends BasePage {
     }
 
 
-     generateRandomNumber=async() => {
-        const min = 100000000; 
-        const max = 999999999; 
+    generateRandomNumber = async () => {
+        const min = 100000000;
+        const max = 999999999;
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
@@ -123,6 +123,7 @@ export class EmployeeProfilePage extends BasePage {
 
     selectOnBlockingEmployee = async () => {
         await this.blockingEmployeeButton.click();
+        await this.page.waitForTimeout(2000);
     }
 
     selectOnYesButtonToBlock = async () => {
@@ -130,14 +131,15 @@ export class EmployeeProfilePage extends BasePage {
     }
 
     performBlockForAnEmployee = async () => {
-        await this.selectOnBlockingEmployee();
+        await this.selectOnBlockingEmployee(); 
         await this.selectOnYesButtonToBlock();
-        await this.page.waitForTimeout(3000)
+        await this.page.waitForTimeout(1000);
+
     }
 
     clickOnEmployeeLink = async () => {
         await this.userLink.click();
-        await this.page.waitForTimeout(1000)
+        await this.page.waitForTimeout(1000);
 
     }
 }
