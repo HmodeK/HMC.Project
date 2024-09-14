@@ -27,7 +27,7 @@ export class AddingEmployeePage extends BasePage {
     private genderField: Locator;
     private submitButton: Locator;
     private backToPreviousPage: Locator;
-    private employeesList: Locator;
+    private employeesCells: Locator;
     private pageTitle: Locator;
 
 
@@ -55,7 +55,7 @@ export class AddingEmployeePage extends BasePage {
         this.genderField = page.locator('//div[@id="mui-component-select-personalDetails.gender"]');
         this.submitButton = page.locator('//button[@type="submit"]');
         this.backToPreviousPage = page.locator('//button[@type="button"]').last();
-        this.employeesList = page.locator('//td[@class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium rtl-8epd4k"]');
+        this.employeesCells = page.locator('//td[@class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium rtl-8epd4k"]');
         this.pageTitle = page.locator('//h3[@class="MuiTypography-root MuiTypography-h3 rtl-1gx20ur"]');
         this.initPage();
     }
@@ -291,9 +291,9 @@ export class AddingEmployeePage extends BasePage {
     checkIfSpecificEmployeeIsExist = async (employeeWeAreLookingFor: string): Promise<boolean> => {
 
         await this.page.waitForTimeout(2000)
-        const count = await this.employeesList.count()
+        const count = await this.employeesCells.count()
         for (let i = 0; i < count; i += 7) {
-            if (await this.employeesList.nth(i).innerText() === employeeWeAreLookingFor) {
+            if (await this.employeesCells.nth(i).innerText() === employeeWeAreLookingFor) {
 
                 return true
             }

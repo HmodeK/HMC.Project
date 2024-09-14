@@ -31,7 +31,7 @@ test.describe('Employee list page & profile page', () => {
         testCleanup = new TestCleanup(addingEmployeePage, employeeList, employeeProfilePage);
 
     });
-    
+
     test.afterEach(async () => {
         await testCleanup.performCleanup(areTheDetailsUpdated, isTheEmployeeAdded, areTheMaritalIsUpdated);
         await browser.closeBrowser();
@@ -98,29 +98,31 @@ test.describe('Employee list page & profile page', () => {
 
     test.describe('Filter employees by status', () => {
 
-        test('Filter employees & check whether the employees were filtered by >> inactive', async () => {
+        test('Filter employees by inactive status', async () => {
             await employeeList.performCheckForTheEmployeesActivity(config.activityStatus.inactive);
             const isTextFound = await employeeList.checkTextContent('הפוך לפעיל');
             expect(isTextFound).toBe(true);
         });
 
-        test('Check if the employees are filtered by >> active', async () => {
+        test('Filter employees by active status', async () => {
             await employeeList.performCheckForTheEmployeesActivity();
             const isTextFound = await employeeList.checkTextContent('עדכן');
             expect(isTextFound).toBe(true);
         });
 
-        test('Check if the filter button contains the desired text.>> active', async () => {
-            expect(await employeeList.getFilterButtonText()).toContain('פעיל');
+        test('Verify "פעיל" text in filter button for active employees', async () => {
+            const filterButtonText = await employeeList.getFilterButtonText();
+            expect(filterButtonText).toContain('פעיל');
         });
 
-        test('Check if the filter button contains the desired text.>> inactive', async () => {
-            const buttonText = await employeeList.getFilterButtonText(config.activityStatus.inactive);
-            expect(buttonText).toBe('לא פעיל');
-            // expect(buttonText).toBe('פעיל');
-
+        test('Verify "לא פעיל" text in filter button for inactive employees', async () => {
+            const filterButtonText = await employeeList.getFilterButtonText(config.activityStatus.inactive);
+            expect(filterButtonText).toBe('לא פעיל');
+            // expect(filterButtonText).toBe('פעיל');
         });
+
     });
+
 
 
     test.describe('adding new employee ', () => {
@@ -140,50 +142,56 @@ test.describe('Employee list page & profile page', () => {
         });
     });
 
-    test.describe('operations', () => {
+    test.describe('Employee Operations', () => {
 
-        test('Verify if the new employee we added has been deleted', async () => {
-            await employeeList.checkIfEmployeeNameExistAndDeleteIt(config.employeeWeAreLookingFor.fullName, config.OperationsInEmployeesPage.employeeBlocking)
+        test('Verify deletion of newly added employee', async () => {
+            await employeeList.checkIfEmployeeNameExistAndDeleteIt(config.employeeWeAreLookingFor.fullName, config.OperationsInEmployeesPage.employeeBlocking);
             const employeeExists = await employeeList.checkIfEmployeeNameIsExist(config.employeeWeAreLookingFor.fullName);
             expect(employeeExists).toBe(false);
         });
 
-
-        test('Selects a employee & check a password reset operation by "alert text" ', async () => {
-            await employeeList.selectEmployeeAndResetPassword(config.employees.employee36, config.OperationsInEmployeesPage.passwordReset,
-                config.passwordReset.newPassword, config.passwordReset.verifPassword)
+        test('Reset password for selected employee and verify success alert', async () => {
+            await employeeList.selectEmployeeAndResetPassword(
+                config.employees.employee36,
+                config.OperationsInEmployeesPage.passwordReset,
+                config.passwordReset.newPassword,
+                config.passwordReset.verifPassword
+            );
             const isAlertSuccessful = await employeeList.checkIfAlertContainsText('סיסמה שונתה בהצלחה');
             expect(isAlertSuccessful).toBe(true);
         });
 
-
-        test('Select an employee and perform an update on their details.', async () => {
+        test('Update details for selected employee and verify success alert', async () => {
             const isEmployeeExists = await employeeList.checkIfEmployeeNameIsExist(config.employees.employee36);
-            // const isEmployeeExists = await employeeList.checkIfEmployeeNameIsExist('עובד employee 3');  // *** fail test ***
 
-            if (isEmployeeExists) { // בדיקה האם העובד קיים ברשימה
-                await employeeList.SelectAnEmployeeAndUpdateTheirDetails(config.employees.employee36, config.employees.employee36, config.OperationsInEmployeesPage.update);
+            if (isEmployeeExists) {
+                await employeeList.SelectAnEmployeeAndUpdateTheirDetails(
+                    config.employees.employee36,
+                    config.employees.employee36,
+                    config.OperationsInEmployeesPage.update
+                );
                 await addingEmployeePage.implementTheNewUpdateAboutGender(config.gender.female);
                 const isAlertSuccessful = await employeeList.checkIfAlertContainsText('דוח עודכן בהצלחה');
                 expect(isAlertSuccessful).toBe(true);
-                areTheDetailsUpdated = true;
             } else {
                 console.log('The employee does not exist in the list. Skipping update operation.');
-                expect(!isEmployeeExists).toBeFalsy();  //מוודאים שהעובד באמת לא קיים ברשימה.
+                expect(isEmployeeExists).toBe(false); // Ensure employee does not exist
             }
         });
 
     });
 
-    test.describe('table actions', () => {
 
-        test('Search for a specific employee and verify if is exist in the employee list', async () => {
-            const searchSpecificEmployee = await employeeList.checkIfEmployeeNameIsExist(config.employees.employee36);
-            expect(searchSpecificEmployee).toBeTruthy();
+    test.describe('Table Actions', () => {
+
+        test('Search for a specific employee and verify existence in the employee list', async () => {
+            const isEmployeeExist = await employeeList.checkIfEmployeeNameIsExist(config.employees.employee36);
+            expect(isEmployeeExist).toBe(true);
             // expect(await employeeList.checkIfEmployeeNameIsExist('asasasas')).toBeTruthy(); // *** fail test ***
+
         });
 
-        test('Filter the employee list to display only 20 entries, then verify the count of employees in the filtered list.', async () => {
+        test('Filter the employee list to display 20 entries and verify the count of employees', async () => {
             await employeeList.chooseMenuNumber(20);
             const employeeCount = await employeeList.howManyEmployeeInTheList();
             expect(employeeCount).toBe(20);
@@ -191,42 +199,40 @@ test.describe('Employee list page & profile page', () => {
 
     });
 
-    test.describe('profile actions', () => {
 
-        test('Verify that clicking on an employee link navigates to the employee list page.', async () => {
+    test.describe('Profile Actions', () => {
+
+        test('Navigate to employee list page after selecting an employee profile', async () => {
             await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
             await employeeProfilePage.clickOnEmployeeLink();
             const title = await employeeList.getPageTitle();
             expect(title).toBe('רשימת עובדים');
         });
 
-        test('Verify that the selected employees details are updated correctly ..', async () => {
-            const isEmployeeExists1 = await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36,);
+        test('Update selected employee details and verify the update', async () => {
+            const isEmployeeExists = await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
 
-            if (isEmployeeExists1) { // בדיקה האם העובד קיים ברשימה
+            if (isEmployeeExists) { // בדיקה האם העובד קיים ברשימה
                 // await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
                 await employeeProfilePage.selectEditingDetails();
-                await addingEmployeePage.performUpdatingAboutMaritalStatus(config.maritalStatus.single)
-                await employeeList.selectingEmployeeToEnterTheirProfile(config.employees.employee36);
-                const updatesIsSuccessful = await employeeProfilePage.getEmployeeDetailInTheContainerOfDetails('רווק')
-                expect(updatesIsSuccessful).toBe(true);
-                areTheMaritalIsUpdated = true; //cleanup
-            
+                await addingEmployeePage.performUpdatingAboutMaritalStatus(config.maritalStatus.single);
+                const isUpdateSuccessful = await employeeProfilePage.getEmployeeDetailInTheContainerOfDetails('רווק');
+                expect(isUpdateSuccessful).toBe(true);
+                areTheMaritalIsUpdated = true; // cleanup
             } else {
                 console.log('The employee does not exist in the list. Skipping update operation.');
-                expect(!isEmployeeExists1).toBeFalsy();  //מוודאים שהעובד באמת לא קיים ברשימה.
+                expect(isEmployeeExists).toBeFalsy();  // Ensure employee does not exist
             }
         });
 
-
-        test('Verify that clicking on an employee blocking button removes the employee from the list of employees.', async () => {
-            await employeeList.activateEmployeeStatus(config.employeeWeAreLookingFor.fullName,config.activityStatus.inactive,config.employeeWeAreLookingFor.fullName);
+        test('Block employee and verify removal from the employee list', async () => {
+            await employeeList.activateEmployeeStatus(config.employeeWeAreLookingFor.fullName, config.activityStatus.inactive, config.employeeWeAreLookingFor.fullName);
             await employeeProfilePage.performBlockForAnEmployee();
-            await employeeProfilePage.clickOnEmployeeLink()
-            await page.waitForTimeout(4000)
-            const isEmployeeExistsInTheList = await employeeList.checkIfEmployeeNameIsExist(config.employeeWeAreLookingFor.fullName);
-            expect(isEmployeeExistsInTheList).toBe(false);
+            await employeeProfilePage.clickOnEmployeeLink();
+            await page.waitForTimeout(4000);
+            const isEmployeeExist = await employeeList.checkIfEmployeeNameIsExist(config.employeeWeAreLookingFor.fullName);
+            expect(isEmployeeExist).toBe(false);
         });
-    });
 
+    });
 });

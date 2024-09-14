@@ -4,7 +4,7 @@ import { SidebarPage } from "./sidebar-page";
 
 export class EmployeeList extends BasePage {
     private searchBar: Locator;
-    private employeesList: Locator;
+    private employeesCells: Locator;
     private employeeStatusButton: Locator;/////////////////////////////////////////////  A question to check
     linkByHref: (hrefValue: any) => Locator;
     private newUserLink: Locator;
@@ -25,7 +25,7 @@ export class EmployeeList extends BasePage {
     constructor(page: Page) {
         super(page);
         this.searchBar = page.locator('//input[@type="search"]');
-        this.employeesList = page.locator('//td[@class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium rtl-8epd4k"]');
+        this.employeesCells = page.locator('//td[@class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium rtl-8epd4k"]');
         this.employe = page.locator('//td[@class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeMedium rtl-8epd4k"]').nth(0);
         this.employeeStatusButton = page.locator('//div[@aria-haspopup="listbox"]').first();
         this.linkByHref = (hrefValue) => this.page.locator(`a[href="${hrefValue}"]`);
@@ -59,11 +59,11 @@ export class EmployeeList extends BasePage {
 
     checkIfEmployeeNameIsExist = async (employeeName: string): Promise<boolean> => {
         await this.page.waitForTimeout(1000);
-        const count = await this.employeesList.count()
+        const count = await this.employeesCells.count()
         await this.page.waitForTimeout(1000);
 
         for (let i = 0; i < count; i++) {
-            if (await this.employeesList.nth(i).innerText() === employeeName) {
+            if (await this.employeesCells.nth(i).innerText() === employeeName) {
                 console.log(`Employee ${employeeName} exists at index ${i}`);;
                 return true;
             }
@@ -78,9 +78,9 @@ export class EmployeeList extends BasePage {
     }
 
     checkIfEmployeeNameExistAndDeleteIt = async (employeeName: string, oper: string) => {
-        const count = await this.employeesList.count();
+        const count = await this.employeesCells.count();
         for (let i = 0; i < count; i++) {
-            if (await this.employeesList.nth(i).innerText() === employeeName) {
+            if (await this.employeesCells.nth(i).innerText() === employeeName) {
 
                 await this.deleteTheEmployeeWeAreAdding(oper)
                 await this.page.waitForTimeout(1000)
@@ -92,7 +92,7 @@ export class EmployeeList extends BasePage {
 
 
     deleteTheEmployeeWeAreAdding = async (oper: string) => {
-        await this.employeesList.nth(6).click()
+        await this.employeesCells.nth(6).click()
         await this.selectOperations(oper)
         await this.page.waitForTimeout(1000)
         await this.selectYesButtonPopup()
@@ -157,7 +157,7 @@ export class EmployeeList extends BasePage {
         await this.fillEmployeeName(empName)
         await this.checkIfEmployeeNameIsExist(empName);
         await this.page.waitForTimeout(1000)
-        await this.employeesList.nth(6).click()
+        await this.employeesCells.nth(6).click()
         await this.page.waitForTimeout(1000)
         await this.selectOperations(oper);
         await this.fillNewPasswordToReset(newPass);
@@ -226,7 +226,7 @@ export class EmployeeList extends BasePage {
         await this.fillEmployeeName(empName);
         await this.page.waitForTimeout(1000);
         await this.checkIfEmployeeNameIsExist(employIsExist);
-        await this.employeesList.nth(6).click();
+        await this.employeesCells.nth(6).click();
         await this.page.waitForTimeout(1000);
         await this.selectOperations(oper);
         await this.page.waitForTimeout(1000);
@@ -292,7 +292,7 @@ export class EmployeeList extends BasePage {
         await this.fillEmployeeName(empNa);
         await this.page.waitForTimeout(2000)
         await this.checkIfEmployeeIsExistToSearchAgainInAnotherActivityStatus(empNa2, emStatus);
-        await this.employeesList.nth(6).click()
+        await this.employeesCells.nth(6).click()
         await this.page.waitForTimeout(1000)
         await this.selectOperations(operation);
         await this.page.waitForTimeout(1000)
@@ -312,7 +312,7 @@ export class EmployeeList extends BasePage {
         }
 
         await this.page.waitForTimeout(1000);
-        await this.employeesList.nth(6).click();
+        await this.employeesCells.nth(6).click();
         await this.page.waitForTimeout(3000);
     }
 
